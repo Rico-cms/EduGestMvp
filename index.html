@@ -198,6 +198,10 @@ tbody tr:last-child td { border-bottom: none; }
 tbody tr.clickable { transition: var(--transition); cursor: pointer; }
 tbody tr.clickable:hover { background: var(--bg2); }
 
+/* Table Inputs (Bulletin) */
+.table-input { width: 100%; max-width: 60px; padding: 6px; background: var(--bg); border: 1px solid var(--border2); border-radius: 6px; font-family: 'DM Mono', monospace; font-size: 13px; text-align: center; color: var(--text); transition: var(--transition); }
+.table-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 2px var(--primary-dim); }
+
 /* ─── LISTS & TIMETABLE ─── */
 .mini-list { display: flex; flex-direction: column; gap: 12px; }
 .mini-list-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); transition: var(--transition); cursor: pointer;}
@@ -479,20 +483,20 @@ tbody tr.clickable:hover { background: var(--bg2); }
         <div class="page-header">
           <div>
             <div class="page-title">Notes & <span>Bulletins</span></div>
-            <div class="page-subtitle">Saisie des évaluations et génération de bulletins.</div>
+            <div class="page-subtitle">Saisie des évaluations et génération de bulletins détaillés.</div>
           </div>
         </div>
         
         <div class="toolbar">
           <select class="filter-select" id="filter-classe-peda" onchange="renderPedagogie()">
             <option value="">Toutes les classes</option>
-            <option>6ème A</option><option>3ème A</option><option>2nde D</option><option>Terminale D</option>
+            <option>6ème A</option><option>3ème A</option><option>2nde AB</option><option>Terminale D</option>
           </select>
         </div>
 
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Élève</th><th>Classe</th><th>Maths</th><th>Physique</th><th>Français</th><th>Moyenne T2</th><th>Appréciation</th></tr></thead>
+            <thead><tr><th>Élève</th><th>Classe</th><th>Maths (Coef 4)</th><th>SVT (Coef 2)</th><th>Français (Coef 3)</th><th>Moy. Générale</th><th>Bilan</th></tr></thead>
             <tbody id="pedagogie-tbody"></tbody>
           </table>
         </div>
@@ -578,7 +582,7 @@ tbody tr.clickable:hover { background: var(--bg2); }
             <div class="form-group" style="margin:0; flex:1;">
               <label class="form-label">Classe concernée</label>
               <select class="form-input" id="presence-classe" onchange="renderPresences()">
-                <option>6ème A</option><option>3ème A</option><option>2nde D</option><option>Terminale D</option>
+                <option>6ème A</option><option>3ème A</option><option>2nde AB</option><option>Terminale D</option>
               </select>
             </div>
           </div>
@@ -787,7 +791,7 @@ tbody tr.clickable:hover { background: var(--bg2); }
           <div class="form-group">
             <label class="form-label">Série</label>
             <select class="form-input" id="edit-serie">
-              <option>Tronc Commun</option><option>Littéraire (A)</option><option>Scientifique (D)</option><option>Scientifique (C)</option><option>Technique (G2)</option>
+              <option>Tronc Commun</option><option>Littéraire (AB)</option><option>Scientifique (D)</option><option>Scientifique (C)</option><option>Technique (G2)</option>
             </select>
           </div>
         </div>
@@ -808,34 +812,60 @@ tbody tr.clickable:hover { background: var(--bg2); }
   </div>
 </div>
 
-<!-- Modal Notes Pédagogie -->
+<!-- Modal Notes Pédagogie (Refondu : Grille Type Bulletin) -->
 <div class="modal-overlay" id="modal-notes">
-  <div class="modal">
+  <div class="modal" style="width: 860px; max-width: 95vw;">
     <div class="modal-header">
-      <h2 class="modal-title">Saisie des Notes</h2>
+      <h2 class="modal-title">Grille d'Évaluation (Bulletin Périodique)</h2>
       <button class="modal-close" onclick="closeModal('modal-notes')">✕</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="note-eleve-id">
-      <div style="background: var(--bg3); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
-        <h4 id="note-nom" style="font-size: 18px; margin-bottom: 4px;">Nom Élève</h4>
-        <span class="badge gray" id="note-classe">Classe</span>
+      <div style="background: var(--bg3); padding: 16px; border-radius: 8px; margin-bottom: 24px; display:flex; align-items:center; gap: 16px;">
+        <div class="user-avatar" style="width: 48px; height: 48px; font-size: 18px;" id="note-avatar">AA</div>
+        <div>
+          <h4 id="note-nom" style="font-size: 18px; margin-bottom: 4px; color:var(--text)">Nom Élève</h4>
+          <span class="badge gray" id="note-classe">Classe</span>
+        </div>
       </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Mathématiques (/20)</label><input type="number" step="0.5" max="20" min="0" class="form-input" id="n-math"></div>
-        <div class="form-group"><label class="form-label">Physique-Chimie (/20)</label><input type="number" step="0.5" max="20" min="0" class="form-input" id="n-phys"></div>
+      
+      <div class="table-wrap" style="margin-bottom: 8px; max-height: 400px; overflow-y: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:25%">Discipline</th>
+              <th style="text-align:center">Coef</th>
+              <th style="text-align:center">Moy Interr</th>
+              <th style="text-align:center">Devoir</th>
+              <th style="text-align:center; color:var(--primary)">Moy /20</th>
+              <th style="text-align:center; color:var(--primary)">Moy × Coef</th>
+            </tr>
+          </thead>
+          <tbody id="notes-table-body">
+            <!-- Injecté via JS -->
+          </tbody>
+          <tfoot style="background: var(--bg3);">
+            <tr>
+              <td style="font-weight:700">TOTAUX</td>
+              <td style="text-align:center; font-weight:700" id="notes-tot-coef">0</td>
+              <td colspan="3" style="text-align:right; font-weight:700;">Total des Points :</td>
+              <td style="text-align:center; font-family:'DM Mono', monospace; font-weight:700" id="notes-tot-pts">0.00</td>
+            </tr>
+            <tr>
+              <td colspan="4" style="border:none"></td>
+              <td style="text-align:right; font-weight:700; color:var(--primary); border:none">MOYENNE :</td>
+              <td style="text-align:center; font-family:'DM Mono', monospace; font-weight:700; color:white; background:var(--primary); border-radius:4px; padding: 8px;" id="notes-moy-gen">0.00</td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Français (/20)</label><input type="number" step="0.5" max="20" min="0" class="form-input" id="n-fran"></div>
-        <div class="form-group"><label class="form-label">SVT (/20)</label><input type="number" step="0.5" max="20" min="0" class="form-input" id="n-svt"></div>
-      </div>
+      <div style="font-size: 11px; color: var(--text3); text-align: right; font-style: italic;">Conforme au modèle de bulletin MEMP (Bénin)</div>
     </div>
     <div class="modal-footer" style="justify-content: space-between;">
-      <!-- Bouton Génération MEMP (Requis CDC 5.3) -->
       <button class="btn btn-ghost" onclick="showToast('🖨️', 'Génération du bulletin officiel PDF...')"><span style="font-size:16px">🖨️</span> Bulletin MEMP (PDF)</button>
       <div class="modal-footer-right">
         <button class="btn btn-ghost" onclick="closeModal('modal-notes')">Annuler</button>
-        <button class="btn btn-primary" onclick="saveNotes()">Mettre à jour</button>
+        <button class="btn btn-primary" onclick="saveNotes()">Mettre à jour le bulletin</button>
       </div>
     </div>
   </div>
@@ -875,7 +905,7 @@ tbody tr.clickable:hover { background: var(--bg2); }
           <div style="margin-top: auto;">
             <label class="form-label">Série Recommandée par le Système</label>
             <select class="form-input" id="ori-serie" style="border-color: var(--primary); font-weight: 600;">
-              <option>Littéraire (A)</option><option>Scientifique (D)</option><option>Scientifique (C)</option><option>Technique (G2)</option><option>Maintien actuel</option>
+              <option>Littéraire (AB)</option><option>Scientifique (D)</option><option>Scientifique (C)</option><option>Technique (G2)</option><option>Maintien actuel</option>
             </select>
           </div>
         </div>
@@ -972,6 +1002,19 @@ function toggleTheme() {
 }
 
 // ════════════════════ MOTEUR DE DONNÉES STRUCTURÉES ════════════════════
+// Configuration officielle d'un bulletin type Bénin
+const MATIERES = [
+  { nom: "Mathématiques", coef: 4, type: "Science" },
+  { nom: "Physique-Chimie", coef: 4, type: "Science" },
+  { nom: "S.V.T (Biologie)", coef: 2, type: "Science" },
+  { nom: "Français", coef: 3, type: "Lettre" },
+  { nom: "Anglais", coef: 3, type: "Lettre" },
+  { nom: "Histoire-Géographie", coef: 3, type: "Lettre" },
+  { nom: "Philosophie", coef: 3, type: "Lettre" },
+  { nom: "Économie", coef: 2, type: "Autre" },
+  { nom: "Educ. Phys. et Sportive", coef: 1, type: "Autre" }
+];
+
 let students = [];
 let payments = [];
 let teachers = [
@@ -979,12 +1022,12 @@ let teachers = [
   {id: 2, nom: "Mme Abiodun Sara", matiere: "Physique-Chimie", tel: "+229 95003344", contrat: "Permanent", statut: "Actif"},
   {id: 3, nom: "M. Zinsou Marc", matiere: "Français", tel: "+229 96005566", contrat: "Vacataire", statut: "Actif"},
   {id: 4, nom: "Mme Grâce K.", matiere: "Anglais", tel: "+229 99001122", contrat: "Vacataire", statut: "Actif"},
-  {id: 5, nom: "M. Assogba P.", matiere: "SVT", tel: "+229 90000000", contrat: "Permanent", statut: "Actif"}
+  {id: 5, nom: "M. Assogba P.", matiere: "S.V.T (Biologie)", tel: "+229 90000000", contrat: "Permanent", statut: "Actif"}
 ];
 
 let schedules = [
   {id: 1, classe: "Terminale D", jour: "Lundi", creneau: "08h00 - 10h00", matiere: "Mathématiques", prof: "M. Dossou Alain", salle: "Salle 12"},
-  {id: 2, classe: "Terminale D", jour: "Lundi", creneau: "10h15 - 12h00", matiere: "SVT", prof: "M. Assogba P.", salle: "Labo 1"},
+  {id: 2, classe: "Terminale D", jour: "Lundi", creneau: "10h15 - 12h00", matiere: "S.V.T (Biologie)", prof: "M. Assogba P.", salle: "Labo 1"},
   {id: 3, classe: "Terminale D", jour: "Mardi", creneau: "08h00 - 10h00", matiere: "Physique-Chimie", prof: "Mme Abiodun Sara", salle: "Labo 2"},
   {id: 4, classe: "Terminale D", jour: "Mardi", creneau: "10h15 - 12h00", matiere: "Histoire-Géo", prof: "M. Mensah H.", salle: "Salle 12"},
   {id: 5, classe: "Terminale D", jour: "Mercredi", creneau: "08h00 - 10h00", matiere: "Français", prof: "M. Zinsou Marc", salle: "Salle 12"},
@@ -995,11 +1038,10 @@ let schedules = [
 const NOMS = ["Abiodun", "Assogba", "Gbèdo", "Sohouénou", "Zinsou", "Kpadonou", "Dossou", "Mensah", "Ahouansou", "Hountondji"];
 const PRENOMS = ["Fatima", "Marc", "Kokou", "Grâce", "Armelle", "Joël", "Roxane", "Éric", "Léon", "Aïcha"];
 const METHODES = ["Virement Bancaire", "FedaPay (MTN/Moov)", "Espèces (Agent)"];
-const APTITUDES = ["Mathématiques", "Physique", "Français", "Langues", "Économie", "Technique"];
 
 const STRUCTURE = {
   '1er Cycle': { niveaux: ['6ème', '5ème', '4ème', '3ème'], series: ['Tronc Commun'] },
-  '2nd Cycle': { niveaux: ['2nde', '1ère', 'Terminale'], series: ['Littéraire (A)', 'Scientifique (D)', 'Scientifique (C)', 'Technique (G2)'] }
+  '2nd Cycle': { niveaux: ['2nde', '1ère', 'Terminale'], series: ['Littéraire (AB)', 'Scientifique (D)', 'Scientifique (C)', 'Technique (G2)'] }
 };
 
 let elevesFilters = { cycle: '', niveau: '', serie: '', classe: '', search: '' };
@@ -1013,14 +1055,21 @@ function calculateRisk(moy, abs, due) {
   return 'Faible';
 }
 
-function analyzeProfile(notes) {
-  const { math, phys, fran, svt } = notes;
+function analyzeProfile(bulletin) {
+  // Extraction dynamique des notes depuis le vrai bulletin coefficié
+  const getMoy = (nom) => { const mat = bulletin.find(m => m.matiere === nom); return mat ? mat.moyenne : 10; };
+  
+  const math = getMoy("Mathématiques");
+  const phys = getMoy("Physique-Chimie");
+  const fran = getMoy("Français");
+  const svt = getMoy("S.V.T (Biologie)");
+
   let best = 'Maths'; let max = math;
   if(phys > max) { best = 'Physique'; max = phys; }
   if(fran > max) { best = 'Français'; max = fran; }
   if(svt > max) { best = 'SVT'; max = svt; }
 
-  let rec = "Littéraire (A)";
+  let rec = "Littéraire (AB)";
   let reason = "";
 
   if (math >= 14 && phys >= 13) {
@@ -1030,7 +1079,7 @@ function analyzeProfile(notes) {
     rec = "Scientifique (D)";
     reason = "Bon profil scientifique avec une forte appétence pour les sciences de la vie.";
   } else if (fran >= 13) {
-    rec = "Littéraire (A)";
+    rec = "Littéraire (AB)";
     reason = "Fortes capacités rédactionnelles et littéraires détectées.";
   } else if (math >= 10 && fran >= 10) {
     rec = "Technique (G2)";
@@ -1039,7 +1088,7 @@ function analyzeProfile(notes) {
     rec = "Maintien actuel";
     reason = "Fragilité globale constatée. Une consolidation des bases est recommandée.";
   }
-  return { best, rec, reason };
+  return { best, rec, reason, math, phys, fran, svt }; // retourne aussi les notes pures pour le graphique
 }
 
 function initData() {
@@ -1060,22 +1109,30 @@ function initData() {
     const isPaid = Math.random() > 0.4;
     const paye = isPaid ? totalDu : (Math.random() > 0.5 ? 35000 : 0);
     
-    const nMath = parseFloat((Math.random() * 10 + 6).toFixed(1));
-    const nPhys = parseFloat((Math.random() * 10 + 6).toFixed(1));
-    const nFran = parseFloat((Math.random() * 10 + 8).toFixed(1));
-    const nSvt  = parseFloat((Math.random() * 10 + 7).toFixed(1));
-    const moyenne = (nMath + nPhys + nFran + nSvt) / 4;
+    // Génération d'un VRAI bulletin par étudiant
+    let bulletin = MATIERES.map(m => {
+      let interro = parseFloat((Math.random() * 8 + 8).toFixed(2)); // Note entre 8 et 16
+      let devoir = parseFloat((Math.random() * 8 + 7).toFixed(2));  // Note entre 7 et 15
+      // La moyenne par matière (souvent (Interro + Devoir)/2 ou (Interro + 2*Devoir)/3)
+      let moyenne = parseFloat(((interro + devoir) / 2).toFixed(2)); 
+      return { matiere: m.nom, coef: m.coef, type: m.type, interro: interro, devoir: devoir, moyenne: moyenne };
+    });
+
+    let totalPoints = 0; let totalCoef = 0;
+    bulletin.forEach(b => { totalPoints += (b.moyenne * b.coef); totalCoef += b.coef; });
+    const moyenneGenerale = totalPoints / totalCoef;
 
     const absences = Math.floor(Math.random() * 12);
-    const risque = calculateRisk(moyenne, absences, totalDu - paye);
-    const profil = analyzeProfile({ math: nMath, phys: nPhys, fran: nFran, svt: nSvt });
+    const risque = calculateRisk(moyenneGenerale, absences, totalDu - paye);
+    const profil = analyzeProfile(bulletin);
 
     students.push({
       id: i, prenom, nom, cycle, niveau, serie, classe,
       matricule: genMatricule(i), tuteur: 'M./Mme ' + nom, tel: '+229 9' + Math.floor(1000000 + Math.random() * 8999999),
       totalDu, paye, statut: isPaid ? 'À jour' : (paye===0 ? 'Impayé total' : 'Impayé partiel'),
-      notes: { math: nMath, phys: nPhys, fran: nFran, svt: nSvt },
-      moyenne, absences, risque, aptitude: profil.best, recoSerie: profil.rec, recoReason: profil.reason
+      bulletin: bulletin,
+      moyenne: moyenneGenerale, absences, risque, 
+      aptitude: profil.best, recoSerie: profil.rec, recoReason: profil.reason
     });
 
     if(paye > 0) {
@@ -1128,10 +1185,17 @@ function getRiskBadge(risk) {
 
 function runCalculations() {
   students.forEach(s => {
-    s.moyenne = (s.notes.math + s.notes.phys + s.notes.fran + s.notes.svt) / 4;
+    // Recalcul de la moyenne générale via les Coefs
+    let totalPoints = 0; let totalCoef = 0;
+    s.bulletin.forEach(b => { 
+      b.moyenne = parseFloat(((b.interro + b.devoir) / 2).toFixed(2));
+      totalPoints += (b.moyenne * b.coef); 
+      totalCoef += b.coef; 
+    });
+    s.moyenne = totalPoints / totalCoef;
     s.risque = calculateRisk(s.moyenne, s.absences, s.totalDu - s.paye);
     
-    const profil = analyzeProfile(s.notes);
+    const profil = analyzeProfile(s.bulletin);
     s.aptitude = profil.best; s.recoSerie = profil.rec; s.recoReason = profil.reason;
   });
   renderDashboard(); renderEleves(); renderPedagogie(); renderOrientation(); renderPayments(); updateKPIs();
@@ -1331,18 +1395,23 @@ function renderPedagogie() {
   const filtered = students.filter(s => filterClasse === "" || s.classe === filterClasse);
   const sorted = [...filtered].sort((a,b) => b.moyenne - a.moyenne);
   
+  const getMoyMatiere = (bulletin, nom) => {
+      const mat = bulletin.find(m => m.matiere === nom);
+      return mat ? mat.moyenne.toFixed(2) : '-';
+  };
+
   tbody.innerHTML = sorted.map((s) => {
     let app = "Satisfaisant";
-    if(s.moyenne >= 16) app = "Excellent"; else if(s.moyenne >= 14) app = "Très Bien"; else if(s.moyenne < 10) app = "Insuffisant";
+    if(s.moyenne >= 16) app = "Félicitations"; else if(s.moyenne >= 14) app = "Tableau d'honneur"; else if(s.moyenne < 10) app = "Avertissement";
     return `
     <tr class="clickable" onclick="openNotesModal(${s.id})">
       <td style="font-weight:600">${s.prenom} ${s.nom}</td>
       <td><span class="badge gray">${s.classe}</span></td>
-      <td class="font-mono">${s.notes.math.toFixed(1)}</td>
-      <td class="font-mono">${s.notes.phys.toFixed(1)}</td>
-      <td class="font-mono">${s.notes.fran.toFixed(1)}</td>
+      <td class="font-mono text3">${getMoyMatiere(s.bulletin, "Mathématiques")}</td>
+      <td class="font-mono text3">${getMoyMatiere(s.bulletin, "S.V.T (Biologie)")}</td>
+      <td class="font-mono text3">${getMoyMatiere(s.bulletin, "Français")}</td>
       <td class="font-mono" style="font-weight:700; color:${s.moyenne >= 10 ? 'var(--green)' : 'var(--red)'}">${s.moyenne.toFixed(2)}</td>
-      <td>${app}</td>
+      <td><span class="badge ${s.moyenne >= 14 ? 'green' : (s.moyenne >= 10 ? 'blue' : 'red')}">${app}</span></td>
     </tr>`
   }).join('');
 }
@@ -1452,12 +1521,16 @@ function saveEleve() {
   if(!prenom || !nom) return showToast('⚠️', 'Nom et prénom obligatoires');
   const niveau = document.getElementById('edit-niveau').value; const serie = document.getElementById('edit-serie').value; const classe = document.getElementById('edit-classe').value;
   const cycle = ['6ème', '5ème', '4ème', '3ème'].includes(niveau) ? '1er Cycle' : '2nd Cycle';
+  
   if(idStr) {
     const s = students.find(x => x.id === parseInt(idStr));
     s.prenom = prenom; s.nom = nom; s.cycle = cycle; s.niveau = niveau; s.serie = serie; s.classe = classe; s.tuteur = document.getElementById('edit-tuteur').value; s.tel = document.getElementById('edit-tel').value;
     showToast('✅', `Dossier mis à jour.`);
   } else {
-    students.push({ id: students.length + 1, prenom, nom, cycle, niveau, serie, classe, matricule: document.getElementById('edit-matricule').value, tuteur: document.getElementById('edit-tuteur').value, tel: document.getElementById('edit-tel').value, totalDu: cycle === '1er Cycle' ? 95000 : 135000, paye: 0, statut: 'Impayé total', notes: {math:10, phys:10, fran:10, svt:10}, moyenne: 10, absences: 0, risque: 'Faible', aptitude: 'À déterminer' });
+    // Initialisation du bulletin vide pour un nouvel élève
+    let newBulletin = MATIERES.map(m => ({ matiere: m.nom, coef: m.coef, type: m.type, interro: 10, devoir: 10, moyenne: 10 }));
+    
+    students.push({ id: students.length + 1, prenom, nom, cycle, niveau, serie, classe, matricule: document.getElementById('edit-matricule').value, tuteur: document.getElementById('edit-tuteur').value, tel: document.getElementById('edit-tel').value, totalDu: cycle === '1er Cycle' ? 95000 : 135000, paye: 0, statut: 'Impayé total', bulletin: newBulletin, moyenne: 10, absences: 0, risque: 'Faible', aptitude: 'À déterminer' });
     showToast('🎉', `Nouvel élève inscrit.`);
   }
   closeModal('modal-eleve'); runCalculations();
@@ -1465,17 +1538,87 @@ function saveEleve() {
 
 function deleteEleve(id) { students = students.filter(s => s.id !== id); showToast('🗑️', 'Dossier élève supprimé.'); closeModal('modal-eleve'); runCalculations(); }
 
+// Logique Modale des Notes (Type Bulletin)
 function openNotesModal(id) {
   const s = students.find(x => x.id === id);
-  document.getElementById('note-eleve-id').value = s.id; document.getElementById('note-nom').textContent = `${s.prenom} ${s.nom}`; document.getElementById('note-classe').textContent = s.classe;
-  document.getElementById('n-math').value = s.notes.math; document.getElementById('n-phys').value = s.notes.phys; document.getElementById('n-fran').value = s.notes.fran; document.getElementById('n-svt').value = s.notes.svt;
+  document.getElementById('note-eleve-id').value = s.id; 
+  document.getElementById('note-nom').textContent = `${s.prenom} ${s.nom}`; 
+  document.getElementById('note-classe').textContent = s.classe;
+  document.getElementById('note-avatar').textContent = s.prenom.charAt(0) + s.nom.charAt(0);
+
+  const tbody = document.getElementById('notes-table-body');
+  
+  // Générer le tableau basé sur le bulletin de l'élève
+  tbody.innerHTML = s.bulletin.map((b, index) => {
+    return `
+      <tr>
+        <td style="font-weight:600; color:var(--text2)">${b.matiere}</td>
+        <td style="text-align:center; color:var(--text3)">${b.coef}</td>
+        <td style="text-align:center"><input type="number" step="0.25" max="20" min="0" class="table-input" id="inp-int-${index}" value="${b.interro}" oninput="updateRowCalc(${index}, ${b.coef})"></td>
+        <td style="text-align:center"><input type="number" step="0.25" max="20" min="0" class="table-input" id="inp-dev-${index}" value="${b.devoir}" oninput="updateRowCalc(${index}, ${b.coef})"></td>
+        <td style="text-align:center; font-family:'DM Mono', monospace; font-weight:700" id="cell-moy-${index}">${b.moyenne.toFixed(2)}</td>
+        <td style="text-align:center; font-family:'DM Mono', monospace; font-weight:700" id="cell-moycoef-${index}">${(b.moyenne * b.coef).toFixed(2)}</td>
+      </tr>
+    `;
+  }).join('');
+
+  updateModalTotals(s.bulletin);
   document.getElementById('modal-notes').classList.add('open');
 }
 
+// Recalcul en direct dans la modale
+function updateRowCalc(index, coef) {
+  const interro = parseFloat(document.getElementById(`inp-int-${index}`).value) || 0;
+  const devoir = parseFloat(document.getElementById(`inp-dev-${index}`).value) || 0;
+  
+  const moy = (interro + devoir) / 2;
+  const moyCoef = moy * coef;
+  
+  document.getElementById(`cell-moy-${index}`).textContent = moy.toFixed(2);
+  document.getElementById(`cell-moycoef-${index}`).textContent = moyCoef.toFixed(2);
+  
+  // Recalcul global de la modale sans sauvegarder
+  let totalPoints = 0; let totalCoef = 0;
+  MATIERES.forEach((m, i) => {
+    const m_coef = m.coef;
+    const m_moy = parseFloat(document.getElementById(`cell-moy-${i}`).textContent) || 0;
+    totalPoints += (m_moy * m_coef);
+    totalCoef += m_coef;
+  });
+  
+  document.getElementById('notes-tot-pts').textContent = totalPoints.toFixed(2);
+  document.getElementById('notes-moy-gen').textContent = (totalPoints / totalCoef).toFixed(2);
+  
+  // Couleur dynamique pour la moyenne
+  const mg = totalPoints / totalCoef;
+  document.getElementById('notes-moy-gen').style.backgroundColor = mg >= 10 ? 'var(--green)' : 'var(--red)';
+}
+
+function updateModalTotals(bulletin) {
+  let totalPoints = 0; let totalCoef = 0;
+  bulletin.forEach(b => { totalPoints += (b.moyenne * b.coef); totalCoef += b.coef; });
+  
+  document.getElementById('notes-tot-coef').textContent = totalCoef;
+  document.getElementById('notes-tot-pts').textContent = totalPoints.toFixed(2);
+  const mg = totalPoints / totalCoef;
+  document.getElementById('notes-moy-gen').textContent = mg.toFixed(2);
+  document.getElementById('notes-moy-gen').style.backgroundColor = mg >= 10 ? 'var(--primary)' : 'var(--red)';
+}
+
 function saveNotes() {
-  const id = parseInt(document.getElementById('note-eleve-id').value); const s = students.find(x => x.id === id);
-  s.notes.math = parseFloat(document.getElementById('n-math').value) || 0; s.notes.phys = parseFloat(document.getElementById('n-phys').value) || 0; s.notes.fran = parseFloat(document.getElementById('n-fran').value) || 0; s.notes.svt = parseFloat(document.getElementById('n-svt').value) || 0;
-  showToast('📝', `Bulletin de ${s.prenom} mis à jour.`); closeModal('modal-notes'); runCalculations();
+  const id = parseInt(document.getElementById('note-eleve-id').value); 
+  const s = students.find(x => x.id === id);
+  
+  // Récupération de toutes les lignes
+  s.bulletin.forEach((b, index) => {
+    b.interro = parseFloat(document.getElementById(`inp-int-${index}`).value) || 0;
+    b.devoir = parseFloat(document.getElementById(`inp-dev-${index}`).value) || 0;
+    // On met à jour l'objet data, le runCalculations fera le recalcul officiel
+  });
+  
+  showToast('📝', `Bulletin de ${s.prenom} mis à jour.`); 
+  closeModal('modal-notes'); 
+  runCalculations();
 }
 
 function openOrientationModal(id) {
@@ -1490,11 +1633,14 @@ function openOrientationModal(id) {
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   Chart.defaults.color = isDark ? '#CBD5E1' : '#475569';
   
+  // Récupérer les notes depuis analyzeProfile car on les retourne maintenant
+  const prof = analyzeProfile(s.bulletin);
+
   oriChartInstance = new Chart(ctx, {
     type: 'radar',
     data: {
       labels: ['Maths', 'Physique', 'SVT', 'Français'],
-      datasets: [{ label: 'Profil Élève', data: [s.notes.math, s.notes.phys, s.notes.svt, s.notes.fran], backgroundColor: 'rgba(124, 58, 237, 0.2)', borderColor: '#7C3AED', pointBackgroundColor: '#7C3AED', pointBorderColor: '#fff', borderWidth: 2 }]
+      datasets: [{ label: 'Profil Élève', data: [prof.math, prof.phys, prof.svt, prof.fran], backgroundColor: 'rgba(124, 58, 237, 0.2)', borderColor: '#7C3AED', pointBackgroundColor: '#7C3AED', pointBorderColor: '#fff', borderWidth: 2 }]
     },
     options: { scales: { r: { min: 0, max: 20, ticks: { stepSize: 5, display: false } } }, plugins: { legend: { display: false } }, maintainAspectRatio: false }
   });
