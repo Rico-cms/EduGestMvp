@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +9,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
 :root {
-  /* THÈME CLAIR & VIOLET */
+  /* THÈME CLAIR (Par défaut) */
   --bg: #FFFFFF;
   --bg2: #F8FAFC;
   --bg3: #F1F5F9;
@@ -45,9 +45,24 @@
   --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* THÈME SOMBRE (Requis par CDC 5.5) */
+[data-theme="dark"] {
+  --bg: #0F172A;
+  --bg2: #020617;
+  --bg3: #1E293B;
+  --bg4: #334155;
+  --border: #1E293B;
+  --border2: #334155;
+  
+  --primary-dim: rgba(124, 58, 237, 0.15);
+  --text: #F8FAFC;
+  --text2: #CBD5E1;
+  --text3: #94A3B8;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 14px; -webkit-font-smoothing: antialiased; }
-body { background: var(--bg2); color: var(--text); font-family: 'Syne', sans-serif; overflow-x: hidden; }
+body { background: var(--bg2); color: var(--text); font-family: 'Syne', sans-serif; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
@@ -61,9 +76,9 @@ a { text-decoration: none; color: inherit; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(30px) scale(0.97); } to { opacity: 1; transform: none; } }
 .login-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
 .login-logo-mark { width: 44px; height: 44px; background: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant', serif; font-weight: 700; font-size: 24px; color: white; }
-.login-logo-text { font-family: 'Cormorant', serif; font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+.login-logo-text { font-family: 'Cormorant', serif; font-size: 28px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); }
 .login-logo-text span { color: var(--primary); }
-.login-headline { font-family: 'Cormorant', serif; font-size: 32px; font-weight: 600; line-height: 1.2; margin-bottom: 8px; }
+.login-headline { font-family: 'Cormorant', serif; font-size: 32px; font-weight: 600; line-height: 1.2; margin-bottom: 8px; color: var(--text); }
 .login-sub { color: var(--text2); font-size: 14px; margin-bottom: 32px; }
 .form-group { margin-bottom: 20px; }
 .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; }
@@ -78,11 +93,11 @@ a { text-decoration: none; color: inherit; }
 #app.visible { display: flex; }
 
 /* ─── SIDEBAR ─── */
-.sidebar { width: var(--sidebar-w); min-width: var(--sidebar-w); background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; height: 100vh; overflow-y: auto; overflow-x: hidden; }
+.sidebar { width: var(--sidebar-w); min-width: var(--sidebar-w); background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; height: 100vh; overflow-y: auto; overflow-x: hidden; transition: background 0.3s, border-color 0.3s; }
 .sidebar-logo { padding: 24px; border-bottom: 1px solid var(--border); }
 .sidebar-logo-inner { display: flex; align-items: center; gap: 12px; }
 .logo-mark { width: 38px; height: 38px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant', serif; font-weight: 700; font-size: 20px; color: white; flex-shrink: 0; }
-.logo-name { font-family: 'Cormorant', serif; font-size: 20px; font-weight: 700; letter-spacing: -0.3px; line-height: 1.1; }
+.logo-name { font-family: 'Cormorant', serif; font-size: 20px; font-weight: 700; letter-spacing: -0.3px; line-height: 1.1; color: var(--text);}
 .logo-name span { color: var(--primary); }
 .logo-school { font-size: 11px; color: var(--text3); font-weight: 500; margin-top: 2px; }
 .sidebar-section { padding: 20px 16px 8px; }
@@ -107,22 +122,48 @@ a { text-decoration: none; color: inherit; }
 .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
 
 /* ─── TOPBAR ─── */
-.topbar { height: var(--topbar-h); min-height: var(--topbar-h); padding: 0 32px; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; z-index: 10; }
+.topbar { height: var(--topbar-h); min-height: var(--topbar-h); padding: 0 32px; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; z-index: 10; transition: background 0.3s, border-color 0.3s; }
 .topbar-breadcrumb { font-size: 16px; font-weight: 600; color: var(--text); }
 .topbar-actions { display: flex; align-items: center; gap: 16px; }
-.topbar-date { font-size: 13px; color: var(--text2); font-weight: 500; }
+
+/* Sélecteur de langue (CDC 1.3) */
+.lang-selector { padding: 6px 10px; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-size: 12px; font-weight: 600; outline: none; cursor: pointer; }
+.theme-btn { width: 36px; height: 36px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; transition: var(--transition); color: var(--text); }
+.theme-btn:hover { background: var(--primary-dim); color: var(--primary); border-color: var(--primary-light); }
+
+.topbar-date { font-size: 13px; color: var(--text2); font-weight: 500; margin-left: 12px;}
 .topbar-btn { width: 40px; height: 40px; background: var(--bg); border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; transition: var(--transition); color: var(--text2); position: relative; }
 .topbar-btn:hover { background: var(--bg3); color: var(--primary); border-color: var(--border2); }
 .notif-dot { position: absolute; top: 10px; right: 10px; width: 8px; height: 8px; background: var(--red); border-radius: 50%; border: 2px solid var(--bg); }
-.logout-btn { font-size: 13px; color: var(--red); font-weight: 600; cursor: pointer; padding: 8px 16px; border-radius: var(--radius-sm); border: 1px solid transparent; transition: var(--transition); }
+.logout-btn { font-size: 13px; color: var(--red); font-weight: 600; cursor: pointer; padding: 8px 16px; border-radius: var(--radius-sm); border: 1px solid transparent; transition: var(--transition); background: transparent;}
 .logout-btn:hover { background: var(--red-dim); border-color: rgba(239, 68, 68, 0.2); }
 
 /* ─── CONTENT ─── */
-.content { flex: 1; overflow-y: auto; padding: 32px; background: var(--bg2); }
-.page-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end;}
+.content { flex: 1; overflow-y: auto; padding: 32px; background: var(--bg2); transition: background 0.3s; }
+.page-header { margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end;}
 .page-title { font-family: 'Cormorant', serif; font-size: 36px; font-weight: 700; line-height: 1.1; margin-bottom: 8px; color: var(--text); }
 .page-title span { color: var(--primary); }
 .page-subtitle { font-size: 14px; color: var(--text2); }
+
+/* ─── TABS & STRUCTURE ACADÉMIQUE ─── */
+.page-tabs { display: flex; gap: 32px; border-bottom: 1px solid var(--border); margin-bottom: 24px; overflow-x: auto; }
+.page-tab { padding: 0 0 12px 0; font-weight: 600; font-size: 14px; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; transition: var(--transition); white-space: nowrap; }
+.page-tab:hover { color: var(--text); }
+.page-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+.directory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.dir-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; cursor: pointer; transition: var(--transition); display: flex; flex-direction: column; gap: 16px; }
+.dir-card:hover { border-color: var(--primary); box-shadow: var(--shadow); transform: translateY(-2px); }
+.dir-header { display: flex; align-items: center; gap: 12px; }
+.dir-icon { width: 44px; height: 44px; border-radius: 10px; background: var(--primary-dim); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.dir-title { font-weight: 700; font-size: 16px; color: var(--text); line-height: 1.2; }
+.dir-stats { display: flex; gap: 16px; font-size: 13px; color: var(--text2); border-top: 1px solid var(--border); padding-top: 16px; }
+.dir-stat { display: flex; align-items: center; gap: 6px; font-weight: 500;}
+
+.active-filters { display: flex; gap: 8px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
+.filter-tag { display: inline-flex; align-items: center; gap: 6px; background: var(--primary-dim); color: var(--primary); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid rgba(124, 58, 237, 0.2); }
+.filter-tag span { cursor: pointer; font-size: 14px; line-height: 1; padding-left: 4px; }
+.filter-tag span:hover { color: var(--text); }
 
 /* ─── GRID & CARDS ─── */
 .grid { display: grid; gap: 20px; }
@@ -167,12 +208,16 @@ tbody tr.clickable:hover { background: var(--bg2); }
 .ml-score { font-family: 'DM Mono', monospace; font-weight: 700; font-size: 15px; }
 
 .timetable { display: grid; grid-template-columns: 80px repeat(5, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden;}
-.tt-cell { background: var(--bg); padding: 12px; text-align: center; font-size: 13px; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 80px;}
+.tt-cell { background: var(--bg); padding: 12px; text-align: center; font-size: 13px; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 80px; position: relative;}
 .tt-head { background: var(--bg3); font-weight: 700; color: var(--text2); text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; min-height: 40px;}
 .tt-time { font-family: 'DM Mono', monospace; font-weight: 600; color: var(--text3); background: var(--bg3); }
-.tt-course { background: var(--primary-dim); color: var(--primary); font-weight: 600; border-radius: 6px; padding: 8px; width: 100%; height: 100%; display: flex; flex-direction: column; gap: 4px;}
-.tt-course.break { background: var(--amber-dim); color: var(--amber); }
+.tt-course { background: var(--primary-dim); color: var(--primary); font-weight: 600; border-radius: 6px; padding: 8px; width: 100%; height: 100%; display: flex; flex-direction: column; gap: 4px; box-shadow: var(--shadow-sm);}
+.tt-course.break { background: var(--amber-dim); color: var(--amber); box-shadow: none; justify-content: center;}
 .tt-course span { font-size: 11px; opacity: 0.8; font-weight: 500; }
+.tt-cell.clickable { cursor: pointer; transition: var(--transition); }
+.tt-cell.clickable:hover { transform: scale(0.97); z-index: 2; position: relative;}
+.tt-cell.empty-slot { cursor: pointer; border: 1px dashed transparent; transition: var(--transition); color: var(--text3); font-size: 20px;}
+.tt-cell.empty-slot:hover { border-color: var(--primary); background: var(--bg3); color: var(--primary); }
 
 /* ─── BADGES & BUTTONS ─── */
 .badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; }
@@ -216,12 +261,12 @@ tbody tr.clickable:hover { background: var(--bg2); }
 .modal-footer-right { display: flex; gap: 12px; }
 
 /* ─── TOAST ─── */
-#toast { position: fixed; bottom: 32px; right: 32px; z-index: 9999; display: flex; align-items: center; gap: 12px; background: var(--text); color: white; border-radius: 12px; padding: 16px 24px; box-shadow: var(--shadow-lg); transform: translateY(20px); opacity: 0; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); pointer-events: none; }
+#toast { position: fixed; bottom: 32px; right: 32px; z-index: 9999; display: flex; align-items: center; gap: 12px; background: var(--primary); color: white; border-radius: 12px; padding: 16px 24px; box-shadow: var(--shadow-lg); transform: translateY(20px); opacity: 0; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); pointer-events: none; }
 #toast.show { transform: none; opacity: 1; }
 .toast-icon { font-size: 20px; }
 .toast-text { font-size: 14px; font-weight: 500; }
 
-/* ─── RADIO BUTTONS (Présences) ─── */
+/* ─── RADIO BUTTONS ─── */
 .radio-group { display: flex; gap: 12px; }
 .radio-label { display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; }
 .radio-label input { accent-color: var(--primary); }
@@ -260,6 +305,9 @@ tbody tr.clickable:hover { background: var(--bg2); }
       <input class="form-input" type="password" placeholder="••••••••" id="login-pass" value="demo2026">
     </div>
     <button class="btn-primary" onclick="doLogin()" id="btn-login">Connexion</button>
+    <div style="text-align:center; margin-top: 24px; font-size: 11px; color: var(--text3);">
+      Conçu pour le Ministère des Enseignements (MEMP)<br>Bénin, Afrique de l'Ouest
+    </div>
   </div>
 </div>
 
@@ -286,16 +334,17 @@ tbody tr.clickable:hover { background: var(--bg2); }
     <div class="sidebar-section">
       <div class="sidebar-section-label">Pédagogie & Scolarité</div>
       <div class="nav-item" onclick="navigate('pedagogie')"><span class="nav-icon">📝</span> Notes & Bulletins</div>
-      <div class="nav-item" onclick="navigate('orientation')"><span class="nav-icon">🧭</span> Orientation & Suivi</div>
-      <div class="nav-item" onclick="navigate('presences')"><span class="nav-icon">⏰</span> Présences <span class="nav-badge green">Actif</span></div>
+      <div class="nav-item" onclick="navigate('orientation')"><span class="nav-icon">🧭</span> Orientation IA</div>
+      <div class="nav-item" onclick="navigate('examens')"><span class="nav-icon">🎓</span> Examens & BEPC <span class="nav-badge green">Nouveau</span></div>
+      <div class="nav-item" onclick="navigate('presences')"><span class="nav-icon">⏰</span> Présences</div>
       <div class="nav-item" onclick="navigate('planning')"><span class="nav-icon">📅</span> Emploi du temps</div>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Administration</div>
-      <div class="nav-item" onclick="navigate('finance')"><span class="nav-icon">💳</span> Finance & Paiements <span class="nav-badge" id="badge-impayes">0</span></div>
+      <div class="nav-item" onclick="navigate('finance')"><span class="nav-icon">💳</span> Finance & FedaPay <span class="nav-badge" id="badge-impayes">0</span></div>
       <div class="nav-item" onclick="navigate('communication')"><span class="nav-icon">📬</span> Communication</div>
-      <div class="nav-item" onclick="navigate('rh')"><span class="nav-icon">🧑‍🏫</span> Équipe & RH</div>
+      <div class="nav-item" onclick="navigate('rh')"><span class="nav-icon">🧑‍🏫</span> Équipe & Paie</div>
     </div>
 
     <div class="sidebar-footer">
@@ -313,7 +362,18 @@ tbody tr.clickable:hover { background: var(--bg2); }
   <div class="main">
     <div class="topbar">
       <div class="topbar-breadcrumb" id="breadcrumb">Vue d'ensemble</div>
+      
       <div class="topbar-actions">
+        <!-- Sélecteur de langue Multilinguisme (Requis CDC 1.3) -->
+        <select class="lang-selector" onchange="showToast('🌐', 'Langue modifiée.')">
+          <option value="fr">🇫🇷 Français</option>
+          <option value="fon">🇧🇯 Fon</option>
+          <option value="yor">🇧🇯 Yoruba</option>
+        </select>
+        
+        <!-- Toggle Mode Sombre (Requis CDC 5.5) -->
+        <button class="theme-btn" onclick="toggleTheme()" id="btn-theme">🌙</button>
+        
         <div class="topbar-date" id="topbar-date">Lundi 09 Mars 2026</div>
         <div class="topbar-btn" onclick="showToast('🔔','Aucune nouvelle alerte')">🔔<span class="notif-dot"></span></div>
         <button class="logout-btn" onclick="doLogout()">Déconnexion</button>
@@ -329,6 +389,8 @@ tbody tr.clickable:hover { background: var(--bg2); }
             <div class="page-title">Bonjour, <span>Directeur</span></div>
             <div class="page-subtitle">Année scolaire 2025-2026 · Trimestre 2</div>
           </div>
+          <!-- Bouton Rapport MEMP (Requis CDC 5.3) -->
+          <button class="btn btn-ghost" onclick="showToast('📊', 'Rapport MEMP généré avec succès.')"><span style="font-size:16px">📥</span> Exporter Rapport MEMP (PDF)</button>
         </div>
 
         <div class="grid grid-4" style="margin-bottom: 24px;">
@@ -355,13 +417,10 @@ tbody tr.clickable:hover { background: var(--bg2); }
         </div>
 
         <div class="grid grid-2">
-          <!-- TOP 5 PERFORMERS -->
           <div class="card">
             <div class="card-header"><span class="card-title">🏆 Top 5 - Excellence Académique</span></div>
             <div class="mini-list" id="dash-top-eleves"></div>
           </div>
-
-          <!-- ALERTES CHURN / RISQUE -->
           <div class="card">
             <div class="card-header"><span class="card-title text-red" style="color:var(--red)">⚠️ Alertes Décrochage (Churn Risk)</span></div>
             <div class="mini-list" id="dash-risk-eleves"></div>
@@ -369,32 +428,49 @@ tbody tr.clickable:hover { background: var(--bg2); }
         </div>
       </div>
 
-      <!-- ── ÉLÈVES (CRUD) ── -->
+      <!-- ── ÉLÈVES (CRUD & STRUCTURE ACADÉMIQUE) ── -->
       <div class="view" id="view-eleves">
         <div class="page-header">
           <div>
             <div class="page-title">Dossiers <span>Élèves</span></div>
-            <div class="page-subtitle">Base de données centralisée de l'établissement. Cliquez sur un élève pour le modifier.</div>
+            <div class="page-subtitle">Annuaire centralisé. Naviguez selon la structure académique.</div>
           </div>
-          <button class="btn btn-primary" onclick="openEleveModal()">+ Inscrire un élève</button>
+          <div style="display:flex; gap:12px;">
+            <button class="btn btn-ghost" onclick="showToast('📥', 'Export de la liste en format Excel.')">Export Excel</button>
+            <button class="btn btn-primary" onclick="openEleveModal()">+ Inscrire un élève</button>
+          </div>
         </div>
 
-        <div class="toolbar">
-          <div class="search-wrap">
-            <span class="search-icon">🔍</span>
-            <input type="text" placeholder="Rechercher par nom, prénom ou matricule..." oninput="filterEleves(this.value)">
-          </div>
-          <select class="filter-select" onchange="filterElevesClasse(this.value)">
-            <option value="">Toutes les classes</option>
-            <option>3ème</option><option>4ème</option><option>5ème</option><option>6ème</option>
-          </select>
+        <!-- Onglets Vues Séparées -->
+        <div class="page-tabs">
+          <div class="page-tab active" id="tab-eleves-all" onclick="setElevesView('all', this)">Tous les dossiers</div>
+          <div class="page-tab" onclick="setElevesView('cycle', this)">Vue par Cycle</div>
+          <div class="page-tab" onclick="setElevesView('niveau', this)">Vue par Niveau</div>
+          <div class="page-tab" onclick="setElevesView('serie', this)">Vue par Série</div>
+          <div class="page-tab" onclick="setElevesView('classe', this)">Vue par Classe</div>
         </div>
 
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Matricule</th><th>Nom Complet</th><th>Classe</th><th>Risque Churn</th><th>Absences</th><th>Paiement</th></tr></thead>
-            <tbody id="eleves-tbody"></tbody>
-          </table>
+        <!-- Conteneur Vues Séparées -->
+        <div id="eleves-directory-container" style="display:none; margin-bottom: 24px;">
+          <div class="directory-grid" id="eleves-directory-grid"></div>
+        </div>
+
+        <!-- Conteneur Vue Tableau -->
+        <div id="eleves-table-container">
+          <div id="eleves-active-filters" class="active-filters"></div>
+          <div class="toolbar">
+            <div class="search-wrap">
+              <span class="search-icon">🔍</span>
+              <input type="text" placeholder="Rechercher par nom, prénom ou matricule..." id="search-eleve" oninput="applyElevesSearch(this.value)">
+            </div>
+            <button class="btn btn-ghost" onclick="clearElevesFilters()" id="btn-clear-filters" style="display:none;">Réinitialiser</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Matricule</th><th>Nom Complet</th><th>Cycle & Niveau</th><th>Série & Classe</th><th>Risque</th><th>Statut Fin.</th></tr></thead>
+              <tbody id="eleves-tbody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -403,14 +479,14 @@ tbody tr.clickable:hover { background: var(--bg2); }
         <div class="page-header">
           <div>
             <div class="page-title">Notes & <span>Bulletins</span></div>
-            <div class="page-subtitle">Cliquez sur un élève pour saisir ses notes. La moyenne se recalcule automatiquement.</div>
+            <div class="page-subtitle">Saisie des évaluations et génération de bulletins.</div>
           </div>
         </div>
         
         <div class="toolbar">
           <select class="filter-select" id="filter-classe-peda" onchange="renderPedagogie()">
             <option value="">Toutes les classes</option>
-            <option>3ème</option><option>4ème</option><option>5ème</option><option>6ème</option>
+            <option>6ème A</option><option>3ème A</option><option>2nde D</option><option>Terminale D</option>
           </select>
         </div>
 
@@ -422,23 +498,68 @@ tbody tr.clickable:hover { background: var(--bg2); }
         </div>
       </div>
 
+      <!-- ── EXAMENS OFFICIELS (NOUVEAU MODULE CDC 2.2) ── -->
+      <div class="view" id="view-examens">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Examens <span>Officiels</span></div>
+            <div class="page-subtitle">Préparation et simulation CEP, BEPC, BAC.</div>
+          </div>
+          <button class="btn btn-primary" onclick="showToast('📈', 'Création d\'un nouvel examen blanc.')">+ Planifier Examen Blanc</button>
+        </div>
+        
+        <div class="grid grid-2">
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom: 16px;">Examen Blanc BEPC - Mars 2026</h3>
+            <div style="display:flex; gap:16px; margin-bottom: 24px;">
+              <div style="flex:1; padding:16px; background:var(--bg3); border-radius:8px; text-align:center;">
+                <div style="font-size:24px; font-weight:700; color:var(--primary)">68%</div>
+                <div style="font-size:12px; color:var(--text2)">Taux de réussite estimé</div>
+              </div>
+              <div style="flex:1; padding:16px; background:var(--bg3); border-radius:8px; text-align:center;">
+                <div style="font-size:24px; font-weight:700; color:var(--text)">45</div>
+                <div style="font-size:12px; color:var(--text2)">Candidats Inscrits</div>
+              </div>
+            </div>
+            <div class="mini-list">
+              <div class="mini-list-item"><div class="ml-info"><span class="ml-name">Abiodun Fatima</span><span class="ml-sub">1ère - Admissible (15.5/20)</span></div><span class="badge green">Félicitations</span></div>
+              <div class="mini-list-item"><div class="ml-info"><span class="ml-name">Mensah Éric</span><span class="ml-sub">2ème - Admissible (14.2/20)</span></div><span class="badge green">Encouragements</span></div>
+              <div class="mini-list-item"><div class="ml-info"><span class="ml-name text-red" style="color:var(--red)">Sohouénou Kokou</span><span class="ml-sub">Non-admissible (08.5/20)</span></div><span class="badge red">Soutien Requis</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom: 16px;">Historique des examens</h3>
+            <div class="table-wrap" style="border:none; box-shadow:none;">
+              <table>
+                <thead><tr><th>Session</th><th>Niveau</th><th>Candidats</th><th>Réussite</th></tr></thead>
+                <tbody>
+                  <tr><td>Blanc Février</td><td>3ème</td><td>45</td><td><span class="text-primary font-bold">55%</span></td></tr>
+                  <tr><td>Blanc Janvier</td><td>3ème</td><td>45</td><td><span class="text-primary font-bold">48%</span></td></tr>
+                  <tr><td>BEPC 2025</td><td>3ème</td><td>42</td><td><span class="text-green font-bold">88%</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- ── ORIENTATION & SUIVI ── -->
       <div class="view" id="view-orientation">
         <div class="page-header">
           <div>
-            <div class="page-title">Cellule <span>Orientation</span></div>
-            <div class="page-subtitle">Gérez les changements de filières et analysez les aptitudes.</div>
+            <div class="page-title">Cellule <span>Orientation IA</span></div>
+            <div class="page-subtitle">Algorithme d'analyse des aptitudes pour suggestions de filières.</div>
           </div>
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Élève</th><th>Classe / Filière Actuelle</th><th>Aptitude Forte</th><th>Statut Conseil</th><th>Action</th></tr></thead>
+            <thead><tr><th>Élève</th><th>Niveau Actuel</th><th>Aptitude Forte</th><th>Statut Conseil</th><th>Action</th></tr></thead>
             <tbody id="orientation-tbody"></tbody>
           </table>
         </div>
       </div>
 
-      <!-- ── PRÉSENCES (NOUVEAU) ── -->
+      <!-- ── PRÉSENCES ── -->
       <div class="view" id="view-presences">
         <div class="page-header">
           <div>
@@ -456,7 +577,9 @@ tbody tr.clickable:hover { background: var(--bg2); }
             </div>
             <div class="form-group" style="margin:0; flex:1;">
               <label class="form-label">Classe concernée</label>
-              <select class="form-input" id="presence-classe" onchange="renderPresences()"><option>3ème</option><option>4ème</option><option>5ème</option><option>6ème</option></select>
+              <select class="form-input" id="presence-classe" onchange="renderPresences()">
+                <option>6ème A</option><option>3ème A</option><option>2nde D</option><option>Terminale D</option>
+              </select>
             </div>
           </div>
         </div>
@@ -469,65 +592,50 @@ tbody tr.clickable:hover { background: var(--bg2); }
         </div>
       </div>
 
-      <!-- ── PLANNING (NOUVEAU) ── -->
+      <!-- ── PLANNING (EMPLOI DU TEMPS) ── -->
       <div class="view" id="view-planning">
         <div class="page-header">
           <div>
             <div class="page-title">Emplois du <span>Temps</span></div>
-            <div class="page-subtitle">Gestion des salles et des créneaux horaires.</div>
+            <div class="page-subtitle">Cliquez sur un créneau pour ajouter, modifier ou supprimer un cours.</div>
           </div>
-          <div class="form-group" style="margin:0; width: 200px;">
-            <select class="form-input"><option>Classe 3ème</option><option>Classe 4ème</option></select>
+          <div class="form-group" style="margin:0; width: 250px;">
+            <label class="form-label">Visualiser la classe</label>
+            <select class="form-input" id="planning-classe" onchange="renderTimetable()">
+              <option value="Terminale D">Terminale D</option>
+              <option value="3ème A">3ème A</option>
+              <option value="6ème A">6ème A</option>
+            </select>
           </div>
         </div>
-        
         <div class="card">
-          <div class="timetable">
-            <div class="tt-cell tt-head">Heure</div><div class="tt-cell tt-head">Lundi</div><div class="tt-cell tt-head">Mardi</div><div class="tt-cell tt-head">Mercredi</div><div class="tt-cell tt-head">Jeudi</div><div class="tt-cell tt-head">Vendredi</div>
-            
-            <div class="tt-cell tt-time">08h - 10h</div>
-            <div class="tt-cell"><div class="tt-course">Mathématiques<span>Salle 12 - M. Dossou</span></div></div>
-            <div class="tt-cell"><div class="tt-course">Physique-Chimie<span>Salle Labo - Mme Abiodun</span></div></div>
-            <div class="tt-cell"><div class="tt-course">Français<span>Salle 12 - M. Zinsou</span></div></div>
-            <div class="tt-cell"><div class="tt-course">Anglais<span>Salle 14 - Mme Grâce</span></div></div>
-            <div class="tt-cell"><div class="tt-course">Mathématiques<span>Salle 12 - M. Dossou</span></div></div>
-
-            <div class="tt-cell tt-time">10h - 10h15</div>
-            <div class="tt-cell" style="grid-column: span 5"><div class="tt-course break">Pause Récréation</div></div>
-
-            <div class="tt-cell tt-time">10h15 - 12h</div>
-            <div class="tt-cell"><div class="tt-course">SVT<span>Salle Labo - M. Assogba</span></div></div>
-            <div class="tt-cell"><div class="tt-course">Histoire-Géo<span>Salle 12 - M. Mensah</span></div></div>
-            <div class="tt-cell"><div class="tt-course">EPS<span>Terrain - M. Joël</span></div></div>
-            <div class="tt-cell"><div class="tt-course">Physique-Chimie<span>Salle Labo - Mme Abiodun</span></div></div>
-            <div class="tt-cell"><div class="tt-course">Français<span>Salle 12 - M. Zinsou</span></div></div>
-          </div>
+          <div class="timetable" id="timetable-grid"></div>
         </div>
       </div>
 
-      <!-- ── RH (NOUVEAU) ── -->
+      <!-- ── RH & PAIE (Mis à jour CDC) ── -->
       <div class="view" id="view-rh">
         <div class="page-header">
           <div>
-            <div class="page-title">Équipe & <span>RH</span></div>
-            <div class="page-subtitle">Gestion du corps professoral et administratif.</div>
+            <div class="page-title">Équipe & <span>Paie</span></div>
+            <div class="page-subtitle">Gestion du corps professoral, contrats et absences.</div>
           </div>
           <button class="btn btn-primary" onclick="openRHModal()">+ Ajouter un enseignant</button>
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Nom Complet</th><th>Matière Principale</th><th>Téléphone</th><th>Statut</th></tr></thead>
+            <thead><tr><th>Nom Complet</th><th>Matière Principale</th><th>Téléphone</th><th>Contrat / Heures</th><th>Statut</th></tr></thead>
             <tbody id="rh-tbody"></tbody>
           </table>
         </div>
       </div>
 
-      <!-- ── FINANCE ── -->
+      <!-- ── FINANCE (Intégration FedaPay CDC) ── -->
       <div class="view" id="view-finance">
         <div class="page-header">
           <div>
             <div class="page-title">Suivi <span>Financier</span></div>
-            <div class="page-subtitle">Encaissements, relances et traçabilité comptable.</div>
+            <div class="page-subtitle">Encaissements, relances et intégration Mobile Money.</div>
           </div>
           <button class="btn btn-primary" onclick="openPaymentModal()">+ Saisir un encaissement</button>
         </div>
@@ -540,21 +648,20 @@ tbody tr.clickable:hover { background: var(--bg2); }
           <select class="filter-select" onchange="filterPaymentMethod(this.value)">
             <option value="">Tous les modes</option>
             <option>Virement Bancaire</option>
-            <option>MTN Mobile Money</option>
-            <option>Moov Money</option>
-            <option>Espèces</option>
+            <option>FedaPay (MTN/Moov)</option>
+            <option>Espèces (Agent)</option>
           </select>
         </div>
 
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Date</th><th>Élève</th><th>Classe</th><th>Montant Versé</th><th>Méthode</th><th>Statut Compte</th></tr></thead>
+            <thead><tr><th>Date</th><th>Élève</th><th>Classe</th><th>Montant Versé</th><th>Méthode / Passerelle</th><th>Statut Compte</th></tr></thead>
             <tbody id="payments-tbody"></tbody>
           </table>
         </div>
       </div>
 
-      <!-- ── COMMUNICATION (AMÉLIORÉ) ── -->
+      <!-- ── COMMUNICATION ── -->
       <div class="view" id="view-communication">
         <div class="page-header">
           <div>
@@ -571,12 +678,16 @@ tbody tr.clickable:hover { background: var(--bg2); }
               <select class="form-input" id="comm-target">
                 <option>Parents - Élèves à Risque Élevé (Churn)</option>
                 <option>Parents - Impayés T2</option>
-                <option>Parents - Classe 3ème</option>
+                <option>Parents - 1er Cycle</option>
               </select>
             </div>
             <div class="form-group">
+              <label class="form-label">Canal de diffusion</label>
+              <select class="form-input"><option>SMS (Bénin)</option><option>WhatsApp API</option><option>Carnet de liaison digital</option></select>
+            </div>
+            <div class="form-group">
               <label class="form-label">Contenu du message</label>
-              <textarea class="form-input" id="comm-msg" rows="5">Bonjour, nous vous prions de bien vouloir vous rapprocher de la Direction concernant le dossier de votre enfant. Cordialement, La Direction.</textarea>
+              <textarea class="form-input" id="comm-msg" rows="4">Bonjour, nous vous prions de bien vouloir vous rapprocher de la Direction concernant le dossier de votre enfant. Cordialement, La Direction.</textarea>
             </div>
             <button class="btn btn-primary" onclick="sendCampaign()">Diffuser le message</button>
           </div>
@@ -587,7 +698,7 @@ tbody tr.clickable:hover { background: var(--bg2); }
               <table>
                 <thead><tr><th>Date</th><th>Cible</th><th>Message</th><th>Statut</th></tr></thead>
                 <tbody id="comm-history">
-                  <tr><td class="text3 font-mono">08 Mar 2026</td><td>Parents - Impayés</td><td class="text2" style="font-size:12px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Rappel de paiement du T2...</td><td><span class="badge green">Délivré</span></td></tr>
+                  <tr><td class="text3 font-mono">08 Mar 2026</td><td>Parents - Impayés</td><td class="text2" style="font-size:12px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Rappel de paiement du T2...</td><td><span class="badge green">Délivré via SMS</span></td></tr>
                 </tbody>
               </table>
             </div>
@@ -600,6 +711,50 @@ tbody tr.clickable:hover { background: var(--bg2); }
 </div>
 
 <!-- ══════════════════ MODALS ══════════════════ -->
+
+<!-- Modal Édition Cours (Planning) -->
+<div class="modal-overlay" id="modal-course">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modal-course-title">Détails du Cours</h2>
+      <button class="modal-close" onclick="closeModal('modal-course')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="course-id">
+      <input type="hidden" id="course-jour">
+      <input type="hidden" id="course-creneau">
+      
+      <div style="background: var(--bg3); padding: 16px; border-radius: 8px; margin-bottom: 24px; display:flex; gap:12px; font-weight:600; color:var(--text2)">
+        <span id="course-display-jour" class="badge gray">Lundi</span>
+        <span id="course-display-creneau" class="badge gray" style="font-family:'DM Mono', monospace">08h00 - 10h00</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Matière enseignée</label>
+        <select class="form-input" id="course-matiere">
+          <option>Mathématiques</option><option>Physique-Chimie</option><option>SVT</option><option>Français</option><option>Histoire-Géo</option><option>Anglais</option><option>EPS</option><option>Philosophie</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Enseignant</label>
+          <select class="form-input" id="course-prof"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Salle (Ex: Salle 12, Labo)</label>
+          <input type="text" class="form-input" id="course-salle" placeholder="Salle 12">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div id="course-delete-zone"></div>
+      <div class="modal-footer-right">
+        <button class="btn btn-ghost" onclick="closeModal('modal-course')">Annuler</button>
+        <button class="btn btn-primary" onclick="saveCourse()">Valider le créneau</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Modal Élève -->
 <div class="modal-overlay" id="modal-eleve">
@@ -614,13 +769,32 @@ tbody tr.clickable:hover { background: var(--bg2); }
         <div class="form-group"><label class="form-label">Prénom</label><input class="form-input" id="edit-prenom"></div>
         <div class="form-group"><label class="form-label">Nom</label><input class="form-input" id="edit-nom"></div>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Classe</label>
-          <select class="form-input" id="edit-classe"><option>3ème</option><option>4ème</option><option>5ème</option><option>6ème</option></select>
+      
+      <div style="padding: 16px; background: var(--bg3); border-radius: 8px; margin-bottom: 20px;">
+        <h4 style="font-size: 13px; font-weight: 700; color: var(--text3); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;">Structure Académique</h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Cycle & Niveau</label>
+            <select class="form-input" id="edit-niveau">
+              <optgroup label="1er Cycle">
+                <option value="6ème">6ème</option><option value="5ème">5ème</option><option value="4ème">4ème</option><option value="3ème">3ème</option>
+              </optgroup>
+              <optgroup label="2nd Cycle">
+                <option value="2nde">2nde</option><option value="1ère">1ère</option><option value="Terminale">Terminale</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Série</label>
+            <select class="form-input" id="edit-serie">
+              <option>Tronc Commun</option><option>Littéraire (A)</option><option>Scientifique (D)</option><option>Scientifique (C)</option><option>Technique (G2)</option>
+            </select>
+          </div>
         </div>
-        <div class="form-group"><label class="form-label">Matricule</label><input class="form-input" id="edit-matricule" disabled></div>
+        <div class="form-group" style="margin-bottom:0;"><label class="form-label">Classe (Groupe)</label><input class="form-input" id="edit-classe" placeholder="ex: Terminale D1"></div>
       </div>
+
+      <div class="form-group"><label class="form-label">Matricule</label><input class="form-input" id="edit-matricule" disabled></div>
       <div class="form-group"><label class="form-label">Tuteur Légal</label><input class="form-input" id="edit-tuteur"></div>
       <div class="form-group"><label class="form-label">Téléphone Contact</label><input class="form-input" id="edit-tel"></div>
     </div>
@@ -656,10 +830,12 @@ tbody tr.clickable:hover { background: var(--bg2); }
         <div class="form-group"><label class="form-label">SVT (/20)</label><input type="number" step="0.5" max="20" min="0" class="form-input" id="n-svt"></div>
       </div>
     </div>
-    <div class="modal-footer" style="justify-content: flex-end;">
+    <div class="modal-footer" style="justify-content: space-between;">
+      <!-- Bouton Génération MEMP (Requis CDC 5.3) -->
+      <button class="btn btn-ghost" onclick="showToast('🖨️', 'Génération du bulletin officiel PDF...')"><span style="font-size:16px">🖨️</span> Bulletin MEMP (PDF)</button>
       <div class="modal-footer-right">
         <button class="btn btn-ghost" onclick="closeModal('modal-notes')">Annuler</button>
-        <button class="btn btn-primary" onclick="saveNotes()">Mettre à jour le bulletin</button>
+        <button class="btn btn-primary" onclick="saveNotes()">Mettre à jour</button>
       </div>
     </div>
   </div>
@@ -667,26 +843,44 @@ tbody tr.clickable:hover { background: var(--bg2); }
 
 <!-- Modal Orientation -->
 <div class="modal-overlay" id="modal-orientation">
-  <div class="modal">
+  <div class="modal" style="width: 700px; max-width: 95vw;">
     <div class="modal-header">
-      <h2 class="modal-title">Décision d'Orientation</h2>
+      <h2 class="modal-title">Orientation Assistée par Algorithme</h2>
       <button class="modal-close" onclick="closeModal('modal-orientation')">✕</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="ori-eleve-id">
-      <div style="background: var(--bg3); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
-        <h4 id="ori-nom" style="font-size: 18px; margin-bottom: 8px;">Nom de l'élève</h4>
-        <div style="display:flex; gap: 16px; font-size: 13px; color: var(--text2);">
-          <span>Moyenne: <strong id="ori-moy"></strong></span>
-          <span>Aptitude: <strong id="ori-apt"></strong></span>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+        <!-- Colonne Graphique -->
+        <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: flex; align-items: center; justify-content: center;">
+          <canvas id="ori-chart" style="max-width: 100%; max-height: 220px;"></canvas>
+        </div>
+        
+        <!-- Colonne Analyse -->
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="background: var(--bg3); padding: 16px; border-radius: 8px;">
+            <h4 id="ori-nom" style="font-size: 18px; margin-bottom: 8px;">Nom de l'élève</h4>
+            <div style="display:flex; gap: 16px; font-size: 13px; color: var(--text2);">
+              <span>Moyenne: <strong id="ori-moy" style="color:var(--primary)"></strong></span>
+              <span>Point Fort: <strong id="ori-apt"></strong></span>
+            </div>
+          </div>
+          
+          <div style="border-left: 3px solid var(--primary); padding-left: 12px;">
+            <div style="font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; margin-bottom: 4px;">Analyse Data-Driven</div>
+            <div id="ori-reason" style="font-size: 13px; color: var(--text); line-height: 1.4;">Calcul en cours...</div>
+          </div>
+          
+          <div style="margin-top: auto;">
+            <label class="form-label">Série Recommandée par le Système</label>
+            <select class="form-input" id="ori-serie" style="border-color: var(--primary); font-weight: 600;">
+              <option>Littéraire (A)</option><option>Scientifique (D)</option><option>Scientifique (C)</option><option>Technique (G2)</option><option>Maintien actuel</option>
+            </select>
+          </div>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Nouvelle Filière / Classe Suggérée</label>
-        <select class="form-input" id="ori-filiere">
-          <option>2nde Littéraire (A)</option><option>2nde Scientifique (C/D)</option><option>Enseignement Technique (G1/G2)</option><option>Maintien dans la classe actuelle</option>
-        </select>
-      </div>
+      
     </div>
     <div class="modal-footer" style="justify-content: flex-end;">
       <div class="modal-footer-right">
@@ -697,7 +891,7 @@ tbody tr.clickable:hover { background: var(--bg2); }
   </div>
 </div>
 
-<!-- Modal Paiement -->
+<!-- Modal Paiement (Intégration FedaPay) -->
 <div class="modal-overlay" id="modal-payment">
   <div class="modal">
     <div class="modal-header">
@@ -710,8 +904,9 @@ tbody tr.clickable:hover { background: var(--bg2); }
       <div class="form-row">
         <div class="form-group"><label class="form-label">Montant (FCFA)</label><input class="form-input" type="number" id="pay-amount"></div>
         <div class="form-group">
+          <!-- Modifié pour correspondre à FedaPay (CDC 5.3) -->
           <label class="form-label">Méthode</label>
-          <select class="form-input" id="pay-method"><option>Virement Bancaire</option><option>MTN Mobile Money</option><option>Moov Money</option><option>Espèces</option></select>
+          <select class="form-input" id="pay-method"><option>Virement Bancaire</option><option>FedaPay (MTN/Moov)</option><option>Espèces (Agent)</option></select>
         </div>
       </div>
       <div class="form-group"><label class="form-label">Date de réception</label><input class="form-input" type="date" id="pay-date"></div>
@@ -740,11 +935,12 @@ tbody tr.clickable:hover { background: var(--bg2); }
         <div class="form-group">
           <label class="form-label">Matière</label>
           <select class="form-input" id="rh-matiere">
-            <option>Mathématiques</option><option>Physique-Chimie</option><option>Français</option><option>SVT</option><option>Histoire-Géo</option><option>Anglais</option>
+            <option>Mathématiques</option><option>Physique-Chimie</option><option>Français</option><option>SVT</option><option>Histoire-Géo</option><option>Anglais</option><option>EPS</option><option>Philosophie</option>
           </select>
         </div>
         <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" id="rh-tel" placeholder="+229..."></div>
       </div>
+      <div class="form-group"><label class="form-label">Type de Contrat</label><select class="form-input"><option>Vacataire (Heure)</option><option>Permanent (Mensuel)</option></select></div>
     </div>
     <div class="modal-footer">
       <div id="rh-delete-zone"></div>
@@ -760,21 +956,54 @@ tbody tr.clickable:hover { background: var(--bg2); }
 <div id="toast"><span class="toast-icon" id="toast-icon"></span><span class="toast-text" id="toast-text"></span></div>
 
 <script>
-// ════════════════════ MOTEUR DE DONNÉES ════════════════════
+// ════════════════════ FONCTIONS UX ════════════════════
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const target = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', target);
+  document.getElementById('btn-theme').textContent = target === 'dark' ? '☀️' : '🌙';
+  
+  // Update Chart if open
+  if(oriChartInstance) {
+    Chart.defaults.color = target === 'dark' ? '#CBD5E1' : '#475569';
+    oriChartInstance.update();
+  }
+}
+
+// ════════════════════ MOTEUR DE DONNÉES STRUCTURÉES ════════════════════
 let students = [];
 let payments = [];
 let teachers = [
-  {id: 1, nom: "M. Dossou Alain", matiere: "Mathématiques", tel: "+229 97001122", statut: "Actif"},
-  {id: 2, nom: "Mme Abiodun Sara", matiere: "Physique-Chimie", tel: "+229 95003344", statut: "Actif"},
-  {id: 3, nom: "M. Zinsou Marc", matiere: "Français", tel: "+229 96005566", statut: "Actif"}
+  {id: 1, nom: "M. Dossou Alain", matiere: "Mathématiques", tel: "+229 97001122", contrat: "Permanent", statut: "Actif"},
+  {id: 2, nom: "Mme Abiodun Sara", matiere: "Physique-Chimie", tel: "+229 95003344", contrat: "Permanent", statut: "Actif"},
+  {id: 3, nom: "M. Zinsou Marc", matiere: "Français", tel: "+229 96005566", contrat: "Vacataire", statut: "Actif"},
+  {id: 4, nom: "Mme Grâce K.", matiere: "Anglais", tel: "+229 99001122", contrat: "Vacataire", statut: "Actif"},
+  {id: 5, nom: "M. Assogba P.", matiere: "SVT", tel: "+229 90000000", contrat: "Permanent", statut: "Actif"}
 ];
-let campaigns = [];
 
-const NOMS = ["Abiodun", "Assogba", "Gbèdo", "Sohouénou", "Zinsou", "Kpadonou", "Dossou", "Mensah"];
-const PRENOMS = ["Fatima", "Marc", "Kokou", "Grâce", "Armelle", "Joël", "Roxane", "Éric"];
-const CLASSES = ["3ème", "4ème", "5ème", "6ème"];
-const METHODES = ["Virement Bancaire", "MTN Mobile Money", "Moov Money", "Espèces"];
+let schedules = [
+  {id: 1, classe: "Terminale D", jour: "Lundi", creneau: "08h00 - 10h00", matiere: "Mathématiques", prof: "M. Dossou Alain", salle: "Salle 12"},
+  {id: 2, classe: "Terminale D", jour: "Lundi", creneau: "10h15 - 12h00", matiere: "SVT", prof: "M. Assogba P.", salle: "Labo 1"},
+  {id: 3, classe: "Terminale D", jour: "Mardi", creneau: "08h00 - 10h00", matiere: "Physique-Chimie", prof: "Mme Abiodun Sara", salle: "Labo 2"},
+  {id: 4, classe: "Terminale D", jour: "Mardi", creneau: "10h15 - 12h00", matiere: "Histoire-Géo", prof: "M. Mensah H.", salle: "Salle 12"},
+  {id: 5, classe: "Terminale D", jour: "Mercredi", creneau: "08h00 - 10h00", matiere: "Français", prof: "M. Zinsou Marc", salle: "Salle 12"},
+  {id: 6, classe: "Terminale D", jour: "Jeudi", creneau: "08h00 - 10h00", matiere: "Anglais", prof: "Mme Grâce K.", salle: "Salle 14"},
+  {id: 7, classe: "Terminale D", jour: "Vendredi", creneau: "08h00 - 10h00", matiere: "Mathématiques", prof: "M. Dossou Alain", salle: "Salle 12"}
+];
+
+const NOMS = ["Abiodun", "Assogba", "Gbèdo", "Sohouénou", "Zinsou", "Kpadonou", "Dossou", "Mensah", "Ahouansou", "Hountondji"];
+const PRENOMS = ["Fatima", "Marc", "Kokou", "Grâce", "Armelle", "Joël", "Roxane", "Éric", "Léon", "Aïcha"];
+const METHODES = ["Virement Bancaire", "FedaPay (MTN/Moov)", "Espèces (Agent)"];
 const APTITUDES = ["Mathématiques", "Physique", "Français", "Langues", "Économie", "Technique"];
+
+const STRUCTURE = {
+  '1er Cycle': { niveaux: ['6ème', '5ème', '4ème', '3ème'], series: ['Tronc Commun'] },
+  '2nd Cycle': { niveaux: ['2nde', '1ère', 'Terminale'], series: ['Littéraire (A)', 'Scientifique (D)', 'Scientifique (C)', 'Technique (G2)'] }
+};
+
+let elevesFilters = { cycle: '', niveau: '', serie: '', classe: '', search: '' };
+let oriChartInstance = null; 
 
 function genMatricule(i) { return 'CS-' + new Date().getFullYear() + '-' + String(i).padStart(3, '0'); }
 
@@ -784,41 +1013,74 @@ function calculateRisk(moy, abs, due) {
   return 'Faible';
 }
 
+function analyzeProfile(notes) {
+  const { math, phys, fran, svt } = notes;
+  let best = 'Maths'; let max = math;
+  if(phys > max) { best = 'Physique'; max = phys; }
+  if(fran > max) { best = 'Français'; max = fran; }
+  if(svt > max) { best = 'SVT'; max = svt; }
+
+  let rec = "Littéraire (A)";
+  let reason = "";
+
+  if (math >= 14 && phys >= 13) {
+    rec = "Scientifique (C)";
+    reason = "Excellentes aptitudes logico-mathématiques. Profil idéal pour la série C.";
+  } else if (svt >= 13 && (math >= 11 || phys >= 11)) {
+    rec = "Scientifique (D)";
+    reason = "Bon profil scientifique avec une forte appétence pour les sciences de la vie.";
+  } else if (fran >= 13) {
+    rec = "Littéraire (A)";
+    reason = "Fortes capacités rédactionnelles et littéraires détectées.";
+  } else if (math >= 10 && fran >= 10) {
+    rec = "Technique (G2)";
+    reason = "Profil équilibré, parfaitement adapté aux filières techniques.";
+  } else {
+    rec = "Maintien actuel";
+    reason = "Fragilité globale constatée. Une consolidation des bases est recommandée.";
+  }
+  return { best, rec, reason };
+}
+
 function initData() {
-  for(let i=1; i<=28; i++) {
+  for(let i=1; i<=45; i++) {
     const prenom = PRENOMS[Math.floor(Math.random() * PRENOMS.length)];
     const nom = NOMS[Math.floor(Math.random() * NOMS.length)];
-    const classe = CLASSES[Math.floor(Math.random() * CLASSES.length)];
     
-    const totalDu = 105000;
+    const cycle = Math.random() > 0.4 ? '1er Cycle' : '2nd Cycle';
+    const niveauxPossibles = STRUCTURE[cycle].niveaux;
+    const niveau = niveauxPossibles[Math.floor(Math.random() * niveauxPossibles.length)];
+    const seriesPossibles = STRUCTURE[cycle].series;
+    const serie = seriesPossibles[Math.floor(Math.random() * seriesPossibles.length)];
+    
+    const suffixe = serie === 'Tronc Commun' ? (Math.random() > 0.5 ? 'A' : 'B') : serie.match(/\(([^)]+)\)/)?.[1] || '';
+    const classe = suffixe ? `${niveau} ${suffixe}` : niveau;
+
+    const totalDu = cycle === '1er Cycle' ? 95000 : 135000;
     const isPaid = Math.random() > 0.4;
     const paye = isPaid ? totalDu : (Math.random() > 0.5 ? 35000 : 0);
     
-    // Notes par matière (pour le bulletin)
     const nMath = parseFloat((Math.random() * 10 + 6).toFixed(1));
     const nPhys = parseFloat((Math.random() * 10 + 6).toFixed(1));
     const nFran = parseFloat((Math.random() * 10 + 8).toFixed(1));
     const nSvt  = parseFloat((Math.random() * 10 + 7).toFixed(1));
     const moyenne = (nMath + nPhys + nFran + nSvt) / 4;
 
-    const absences = Math.floor(Math.random() * 20);
+    const absences = Math.floor(Math.random() * 12);
     const risque = calculateRisk(moyenne, absences, totalDu - paye);
+    const profil = analyzeProfile({ math: nMath, phys: nPhys, fran: nFran, svt: nSvt });
 
     students.push({
-      id: i, prenom, nom, classe,
-      filiere: "Tronc Commun",
-      matricule: genMatricule(i),
-      tuteur: 'M./Mme ' + nom, tel: '+229 9' + Math.floor(1000000 + Math.random() * 8999999),
+      id: i, prenom, nom, cycle, niveau, serie, classe,
+      matricule: genMatricule(i), tuteur: 'M./Mme ' + nom, tel: '+229 9' + Math.floor(1000000 + Math.random() * 8999999),
       totalDu, paye, statut: isPaid ? 'À jour' : (paye===0 ? 'Impayé total' : 'Impayé partiel'),
       notes: { math: nMath, phys: nPhys, fran: nFran, svt: nSvt },
-      moyenne, absences, risque,
-      aptitude: APTITUDES[Math.floor(Math.random() * APTITUDES.length)]
+      moyenne, absences, risque, aptitude: profil.best, recoSerie: profil.rec, recoReason: profil.reason
     });
 
     if(paye > 0) {
       payments.push({
-        id: Date.now() + i, // unique ID
-        eleveId: i, eleveNom: `${prenom} ${nom}`, classe, montant: paye,
+        id: Date.now() + i, eleveId: i, eleveNom: `${prenom} ${nom}`, classe, montant: paye,
         methode: METHODES[Math.floor(Math.random() * METHODES.length)],
         date: new Date(2026, 1 + Math.floor(Math.random()*2), 1 + Math.floor(Math.random()*28)).toISOString().split('T')[0],
         statut: isPaid ? 'À jour' : 'Partiel'
@@ -827,7 +1089,7 @@ function initData() {
   }
 }
 
-// ════════════════════ NAVIGATION & UI ════════════════════
+// ════════════════════ NAVIGATION ════════════════════
 function doLogin() {
   const btn = document.getElementById('btn-login');
   btn.textContent = 'Authentification...';
@@ -851,12 +1113,11 @@ function navigate(view) {
   document.getElementById('view-' + view).classList.add('active');
   event.currentTarget.classList.add('active');
   
-  const t = { dashboard:"Vue d'ensemble", eleves:"Dossiers Élèves", pedagogie:"Notes & Bulletins", orientation:"Cellule Orientation", finance:"Suivi Financier", communication:"Communication", presences:"Appel & Présences", planning:"Emplois du temps", rh:"Ressources Humaines" };
+  const t = { dashboard:"Vue d'ensemble", eleves:"Dossiers Élèves", pedagogie:"Notes & Bulletins", orientation:"Cellule Orientation IA", examens:"Examens & BEPC", finance:"Suivi Financier", communication:"Communication", presences:"Appel & Présences", planning:"Emplois du temps", rh:"Équipe & Paie" };
   document.getElementById('breadcrumb').textContent = t[view];
-
-  // Specific triggers
-  if(view === 'presences') renderPresences();
+  if(view === 'presences') renderPresences(); 
   if(view === 'rh') renderRH();
+  if(view === 'planning') renderTimetable();
 }
 
 function getRiskBadge(risk) {
@@ -865,15 +1126,181 @@ function getRiskBadge(risk) {
   return `<span class="badge green">Stable</span>`;
 }
 
-// ════════════════════ RENDUS DES VUES ════════════════════
 function runCalculations() {
   students.forEach(s => {
     s.moyenne = (s.notes.math + s.notes.phys + s.notes.fran + s.notes.svt) / 4;
     s.risque = calculateRisk(s.moyenne, s.absences, s.totalDu - s.paye);
+    
+    const profil = analyzeProfile(s.notes);
+    s.aptitude = profil.best; s.recoSerie = profil.rec; s.recoReason = profil.reason;
   });
   renderDashboard(); renderEleves(); renderPedagogie(); renderOrientation(); renderPayments(); updateKPIs();
 }
 
+// ════════════════════ VUES SÉPARÉES ════════════════════
+function applyElevesSearch(val) { elevesFilters.search = val; renderEleves(); }
+
+function setElevesView(mode, tabElement) {
+  document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+  if(tabElement) tabElement.classList.add('active');
+  else document.getElementById('tab-eleves-all').classList.add('active');
+
+  const tableContainer = document.getElementById('eleves-table-container');
+  const dirContainer = document.getElementById('eleves-directory-container');
+  const grid = document.getElementById('eleves-directory-grid');
+
+  if(mode === 'all') { dirContainer.style.display = 'none'; tableContainer.style.display = 'block'; renderEleves(); return; }
+
+  tableContainer.style.display = 'none'; dirContainer.style.display = 'block'; grid.innerHTML = '';
+
+  const groupes = {};
+  students.forEach(s => {
+    const key = s[mode];
+    if(!groupes[key]) groupes[key] = { count: 0, impayes: 0, risque: 0 };
+    groupes[key].count++;
+    if(s.statut !== 'À jour') groupes[key].impayes++;
+    if(s.risque === 'Élevé') groupes[key].risque++;
+  });
+
+  const icons = { cycle: '📁', niveau: '📚', serie: '🎓', classe: '🏫' };
+
+  Object.keys(groupes).sort().forEach(key => {
+    const data = groupes[key];
+    const card = document.createElement('div');
+    card.className = 'dir-card';
+    card.onclick = () => filterFromDirectory(mode, key);
+    
+    card.innerHTML = `
+      <div class="dir-header"><div class="dir-icon">${icons[mode]}</div><div class="dir-title">${key}</div></div>
+      <div class="dir-stats">
+        <div class="dir-stat"><span>👥</span> ${data.count} inscrits</div>
+        <div class="dir-stat" style="color:${data.impayes > 0 ? 'var(--amber)' : 'var(--text3)'}"><span>💳</span> ${data.impayes} impayés</div>
+        ${data.risque > 0 ? `<div class="dir-stat" style="color:var(--red)"><span>⚠️</span> ${data.risque} alertes</div>` : ''}
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function filterFromDirectory(mode, value) {
+  elevesFilters = { cycle: '', niveau: '', serie: '', classe: '', search: '' };
+  elevesFilters[mode] = value;
+  setElevesView('all', document.getElementById('tab-eleves-all'));
+}
+
+function clearElevesFilters(specificKey = null) {
+  if(specificKey) { elevesFilters[specificKey] = ''; } 
+  else { elevesFilters = { cycle: '', niveau: '', serie: '', classe: '', search: '' }; document.getElementById('search-eleve').value = ''; }
+  renderEleves();
+}
+
+function renderEleves() {
+  const tbody = document.getElementById('eleves-tbody');
+  const activeFiltersDiv = document.getElementById('eleves-active-filters');
+  const btnClear = document.getElementById('btn-clear-filters');
+  
+  const filtered = students.filter(s => {
+    const mSearch = (s.nom + s.prenom + s.matricule).toLowerCase().includes(elevesFilters.search.toLowerCase());
+    const mCycle = elevesFilters.cycle === "" || s.cycle === elevesFilters.cycle;
+    const mNiveau = elevesFilters.niveau === "" || s.niveau === elevesFilters.niveau;
+    const mSerie = elevesFilters.serie === "" || s.serie === elevesFilters.serie;
+    const mClasse = elevesFilters.classe === "" || s.classe === elevesFilters.classe;
+    return mSearch && mCycle && mNiveau && mSerie && mClasse;
+  });
+
+  tbody.innerHTML = filtered.map(s => `
+    <tr class="clickable" onclick="openEleveModal(${s.id})">
+      <td class="font-mono text3">${s.matricule}</td>
+      <td style="font-weight:600">${s.prenom} ${s.nom}</td>
+      <td><div style="font-weight:600">${s.niveau}</div><div style="font-size:12px;color:var(--text3)">${s.cycle}</div></td>
+      <td><div><span class="badge gray">${s.classe}</span></div><div style="font-size:12px;color:var(--text2);margin-top:4px">${s.serie}</div></td>
+      <td>${getRiskBadge(s.risque)}</td>
+      <td><span class="badge ${s.statut === 'À jour' ? 'green' : 'amber'}">${s.statut}</span></td>
+    </tr>
+  `).join('');
+
+  let hasFilters = false; activeFiltersDiv.innerHTML = '';
+  ['cycle', 'niveau', 'serie', 'classe'].forEach(key => {
+    if(elevesFilters[key]) {
+      hasFilters = true;
+      activeFiltersDiv.innerHTML += `<div class="filter-tag">${key.charAt(0).toUpperCase() + key.slice(1)}: ${elevesFilters[key]}<span onclick="clearElevesFilters('${key}')">✕</span></div>`;
+    }
+  });
+  btnClear.style.display = hasFilters ? 'inline-block' : 'none';
+}
+
+// ════════════════════ PLANNING ════════════════════
+function renderTimetable() {
+  const cls = document.getElementById('planning-classe').value;
+  const grid = document.getElementById('timetable-grid');
+  
+  const jours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
+  const creneaux = ['08h00 - 10h00', '10h15 - 12h00', '15h00 - 17h00', '17h00 - 19h00'];
+
+  let html = `<div class="tt-cell tt-head" style="border-right:1px solid var(--border)">Heure</div>`;
+  jours.forEach(j => html += `<div class="tt-cell tt-head">${j}</div>`);
+
+  creneaux.forEach((c, index) => {
+    html += `<div class="tt-cell tt-time" style="border-right:1px solid var(--border); border-top:1px solid var(--border)">${c}</div>`;
+    jours.forEach(j => {
+      const course = schedules.find(s => s.classe === cls && s.jour === j && s.creneau === c);
+      html += `<div class="tt-cell" style="border-top:1px solid var(--border)">`;
+      if(course) {
+        html += `<div class="tt-course clickable" onclick="openCourseModal('${j}', '${c}', ${course.id})" style="animation: fadeIn 0.3s ease;">${course.matiere}<span>${course.salle} - ${course.prof}</span></div>`;
+      } else {
+        html += `<div class="tt-cell empty-slot" onclick="openCourseModal('${j}', '${c}', null)">+</div>`;
+      }
+      html += `</div>`;
+    });
+    if(index === 0) html += `<div class="tt-cell tt-time" style="border-right:1px solid var(--border)">10h00 - 10h15</div><div class="tt-cell" style="grid-column: span 5"><div class="tt-course break">Pause Récréation</div></div>`;
+    if(index === 1) html += `<div class="tt-cell tt-time" style="border-right:1px solid var(--border)">12h00 - 15h00</div><div class="tt-cell" style="grid-column: span 5"><div class="tt-course break">Pause Déjeuner</div></div>`;
+  });
+  grid.innerHTML = html;
+}
+
+function openCourseModal(jour, creneau, courseId = null) {
+  document.getElementById('modal-course-title').textContent = courseId ? "Modifier le cours" : "Ajouter un cours";
+  document.getElementById('course-display-jour').textContent = jour;
+  document.getElementById('course-display-creneau').textContent = creneau;
+  document.getElementById('course-jour').value = jour; document.getElementById('course-creneau').value = creneau;
+  document.getElementById('course-id').value = courseId || "";
+
+  document.getElementById('course-prof').innerHTML = teachers.map(t => `<option value="${t.nom}">${t.nom} (${t.matiere})</option>`).join('');
+  const delZone = document.getElementById('course-delete-zone');
+
+  if(courseId) {
+    const course = schedules.find(c => c.id === courseId);
+    document.getElementById('course-matiere').value = course.matiere;
+    document.getElementById('course-prof').value = course.prof;
+    document.getElementById('course-salle').value = course.salle;
+    delZone.innerHTML = `<button class="btn btn-danger" onclick="deleteCourse(${course.id})">Supprimer ce créneau</button>`;
+  } else {
+    document.getElementById('course-matiere').value = "Mathématiques"; document.getElementById('course-salle').value = ""; delZone.innerHTML = '';
+  }
+  document.getElementById('modal-course').classList.add('open');
+}
+
+function saveCourse() {
+  const idStr = document.getElementById('course-id').value;
+  const cls = document.getElementById('planning-classe').value;
+  const jour = document.getElementById('course-jour').value; const creneau = document.getElementById('course-creneau').value;
+  const matiere = document.getElementById('course-matiere').value; const prof = document.getElementById('course-prof').value;
+  const salle = document.getElementById('course-salle').value || 'À définir';
+
+  if(!prof) return showToast('⚠️', 'Veuillez sélectionner un enseignant.');
+
+  if(idStr) {
+    const course = schedules.find(c => c.id === parseInt(idStr));
+    course.matiere = matiere; course.prof = prof; course.salle = salle; showToast('✅', `Créneau mis à jour.`);
+  } else {
+    schedules.push({ id: Date.now(), classe: cls, jour, creneau, matiere, prof, salle }); showToast('🎉', `Nouveau cours ajouté au planning.`);
+  }
+  closeModal('modal-course'); renderTimetable();
+}
+
+function deleteCourse(id) { schedules = schedules.filter(c => c.id !== id); showToast('🗑️', 'Le créneau a été libéré.'); closeModal('modal-course'); renderTimetable(); }
+
+// ════════════════════ RENDUS VUES ════════════════════
 function renderDashboard() {
   const topEleves = [...students].sort((a,b) => b.moyenne - a.moyenne).slice(0, 5);
   document.getElementById('dash-top-eleves').innerHTML = topEleves.map((s, i) => `
@@ -895,25 +1322,6 @@ function renderDashboard() {
       </div>
       <div class="ml-score" style="color:var(--red)">${s.moyenne.toFixed(2)}/20</div>
     </div>
-  `).join('');
-}
-
-let filterSearchEleve = ""; let filterClasseEleve = "";
-function filterEleves(val) { filterSearchEleve = val; renderEleves(); }
-function filterElevesClasse(val) { filterClasseEleve = val; renderEleves(); }
-
-function renderEleves() {
-  const tbody = document.getElementById('eleves-tbody');
-  const filtered = students.filter(s => (s.nom + s.prenom + s.matricule).toLowerCase().includes(filterSearchEleve.toLowerCase()) && (filterClasseEleve === "" || s.classe === filterClasseEleve));
-  tbody.innerHTML = filtered.map(s => `
-    <tr class="clickable" onclick="openEleveModal(${s.id})">
-      <td class="font-mono text3">${s.matricule}</td>
-      <td style="font-weight:600">${s.prenom} ${s.nom}</td>
-      <td><span class="badge gray">${s.classe}</span></td>
-      <td>${getRiskBadge(s.risque)}</td>
-      <td><span style="${s.absences > 10 ? 'color:var(--red);font-weight:bold' : ''}">${s.absences} j.</span></td>
-      <td><span class="badge ${s.statut === 'À jour' ? 'green' : 'amber'}">${s.statut}</span></td>
-    </tr>
   `).join('');
 }
 
@@ -941,14 +1349,17 @@ function renderPedagogie() {
 
 function renderOrientation() {
   const tbody = document.getElementById('orientation-tbody');
-  const targets = students.filter(s => s.classe === '3ème' || s.risque !== 'Faible');
+  const targets = students.filter(s => s.niveau === '3ème' || s.risque !== 'Faible');
   tbody.innerHTML = targets.map(s => `
     <tr>
       <td style="font-weight:600">${s.prenom} ${s.nom}</td>
-      <td><span class="badge gray">${s.classe}</span> - ${s.filiere}</td>
+      <td><span class="badge gray">${s.niveau}</span> <span style="font-size:12px;color:var(--text3)">${s.serie}</span></td>
       <td class="text-primary font-bold">${s.aptitude}</td>
-      <td>${s.filiere === 'Tronc Commun' ? '<span class="text2">En attente</span>' : '<span class="badge green">Orienté</span>'}</td>
-      <td><button class="btn-action" onclick="openOrientationModal(${s.id})">Décision</button></td>
+      <td>
+        <div style="font-size:11px; color:var(--text2); margin-bottom:4px;">Système recommande:</div>
+        <span class="badge ${s.recoSerie.includes('Scientifique') ? 'blue' : (s.recoSerie.includes('Maintien') ? 'red' : 'green')}">${s.recoSerie}</span>
+      </td>
+      <td><button class="btn-primary" style="padding: 6px 12px; font-size: 12px; margin: 0; box-shadow: none;" onclick="openOrientationModal(${s.id})">Analyser profil</button></td>
     </tr>
   `).join('');
 }
@@ -963,7 +1374,7 @@ function renderPayments() {
   filtered.sort((a,b) => new Date(b.date) - new Date(a.date));
   tbody.innerHTML = filtered.map((p) => {
     let iconClass = 'pm-cash'; let iconText = '💵';
-    if(p.methode.includes('MTN')) { iconClass = 'pm-mtn'; iconText = 'M'; } else if(p.methode.includes('Moov')) { iconClass = 'pm-moov'; iconText = 'V'; } else if(p.methode.includes('Bancaire')) { iconClass = 'pm-banque'; iconText = '🏦'; }
+    if(p.methode.includes('FedaPay')) { iconClass = 'pm-mtn'; iconText = '📱'; } else if(p.methode.includes('Bancaire')) { iconClass = 'pm-banque'; iconText = '🏦'; }
     return `
     <tr class="clickable" onclick="openPaymentModal(${p.id})">
       <td class="font-mono text3">${p.date}</td>
@@ -979,7 +1390,9 @@ function renderPayments() {
 function renderPresences() {
   const tbody = document.getElementById('presences-tbody');
   const cls = document.getElementById('presence-classe').value;
-  const filtered = students.filter(s => s.classe === cls);
+  let filtered = students.filter(s => s.classe === cls);
+  if(filtered.length === 0) filtered = students.slice(0, 8);
+  
   tbody.innerHTML = filtered.map(s => `
     <tr>
       <td class="font-mono text3">${s.matricule}</td>
@@ -1002,29 +1415,32 @@ function renderRH() {
       <td style="font-weight:600">${t.nom}</td>
       <td><span class="badge primary">${t.matiere}</span></td>
       <td class="font-mono text3">${t.tel}</td>
+      <td><span class="badge gray">${t.contrat || 'Permanent'}</span></td>
       <td><span class="badge green">${t.statut}</span></td>
     </tr>
   `).join('');
 }
 
-// ════════════════════ ACTIONS & MODALS ════════════════════
-// Élèves
+// ════════════════════ ACTIONS MODALS ════════════════════
+document.getElementById('edit-niveau').addEventListener('change', function(e) {
+  const nv = e.target.value; const s = document.getElementById('edit-serie').value;
+  const suffix = s === 'Tronc Commun' ? 'A' : (s.match(/\(([^)]+)\)/)?.[1] || '');
+  document.getElementById('edit-classe').value = suffix ? `${nv} ${suffix}` : nv;
+});
+
 function openEleveModal(id = null) {
-  const isEdit = id !== null;
-  document.getElementById('modal-eleve-title').textContent = isEdit ? "Dossier Élève" : "Nouvelle Inscription";
+  const isEdit = id !== null; document.getElementById('modal-eleve-title').textContent = isEdit ? "Dossier Élève" : "Nouvelle Inscription";
   const delZone = document.getElementById('eleve-delete-zone');
-  
   if(isEdit) {
     const s = students.find(x => x.id === id);
-    document.getElementById('edit-eleve-id').value = s.id;
-    document.getElementById('edit-prenom').value = s.prenom; document.getElementById('edit-nom').value = s.nom;
-    document.getElementById('edit-classe').value = s.classe; document.getElementById('edit-matricule').value = s.matricule;
-    document.getElementById('edit-tuteur').value = s.tuteur; document.getElementById('edit-tel').value = s.tel;
-    delZone.innerHTML = `<button class="btn btn-danger" onclick="deleteEleve(${s.id})">Supprimer le dossier</button>`;
+    document.getElementById('edit-eleve-id').value = s.id; document.getElementById('edit-prenom').value = s.prenom; document.getElementById('edit-nom').value = s.nom;
+    document.getElementById('edit-niveau').value = s.niveau; document.getElementById('edit-serie').value = s.serie; document.getElementById('edit-classe').value = s.classe;
+    document.getElementById('edit-matricule').value = s.matricule; document.getElementById('edit-tuteur').value = s.tuteur; document.getElementById('edit-tel').value = s.tel;
+    delZone.innerHTML = `<button class="btn btn-danger" onclick="deleteEleve(${s.id})">Supprimer</button>`;
   } else {
     document.getElementById('edit-eleve-id').value = ""; document.getElementById('edit-prenom').value = ""; document.getElementById('edit-nom').value = "";
-    document.getElementById('edit-classe').value = "6ème"; document.getElementById('edit-matricule').value = genMatricule(students.length + 1);
-    document.getElementById('edit-tuteur').value = ""; document.getElementById('edit-tel').value = "";
+    document.getElementById('edit-niveau').value = "6ème"; document.getElementById('edit-serie').value = "Tronc Commun"; document.getElementById('edit-classe').value = "6ème A";
+    document.getElementById('edit-matricule').value = genMatricule(students.length + 1); document.getElementById('edit-tuteur').value = ""; document.getElementById('edit-tel').value = "";
     delZone.innerHTML = '';
   }
   document.getElementById('modal-eleve').classList.add('open');
@@ -1034,200 +1450,142 @@ function saveEleve() {
   const idStr = document.getElementById('edit-eleve-id').value;
   const prenom = document.getElementById('edit-prenom').value; const nom = document.getElementById('edit-nom').value;
   if(!prenom || !nom) return showToast('⚠️', 'Nom et prénom obligatoires');
-
+  const niveau = document.getElementById('edit-niveau').value; const serie = document.getElementById('edit-serie').value; const classe = document.getElementById('edit-classe').value;
+  const cycle = ['6ème', '5ème', '4ème', '3ème'].includes(niveau) ? '1er Cycle' : '2nd Cycle';
   if(idStr) {
     const s = students.find(x => x.id === parseInt(idStr));
-    s.prenom = prenom; s.nom = nom; s.classe = document.getElementById('edit-classe').value;
-    s.tuteur = document.getElementById('edit-tuteur').value; s.tel = document.getElementById('edit-tel').value;
-    showToast('✅', `Dossier de ${prenom} mis à jour.`);
+    s.prenom = prenom; s.nom = nom; s.cycle = cycle; s.niveau = niveau; s.serie = serie; s.classe = classe; s.tuteur = document.getElementById('edit-tuteur').value; s.tel = document.getElementById('edit-tel').value;
+    showToast('✅', `Dossier mis à jour.`);
   } else {
-    students.push({
-      id: students.length + 1, prenom, nom, classe: document.getElementById('edit-classe').value, filiere: "Tronc Commun",
-      matricule: document.getElementById('edit-matricule').value, tuteur: document.getElementById('edit-tuteur').value, tel: document.getElementById('edit-tel').value,
-      totalDu: 105000, paye: 0, statut: 'Impayé total', notes: {math:10, phys:10, fran:10, svt:10}, moyenne: 10, absences: 0, risque: 'Faible', aptitude: 'À déterminer'
-    });
+    students.push({ id: students.length + 1, prenom, nom, cycle, niveau, serie, classe, matricule: document.getElementById('edit-matricule').value, tuteur: document.getElementById('edit-tuteur').value, tel: document.getElementById('edit-tel').value, totalDu: cycle === '1er Cycle' ? 95000 : 135000, paye: 0, statut: 'Impayé total', notes: {math:10, phys:10, fran:10, svt:10}, moyenne: 10, absences: 0, risque: 'Faible', aptitude: 'À déterminer' });
     showToast('🎉', `Nouvel élève inscrit.`);
   }
   closeModal('modal-eleve'); runCalculations();
 }
 
-function deleteEleve(id) {
-  students = students.filter(s => s.id !== id);
-  showToast('🗑️', 'Dossier élève supprimé définitivement.');
-  closeModal('modal-eleve'); runCalculations();
-}
+function deleteEleve(id) { students = students.filter(s => s.id !== id); showToast('🗑️', 'Dossier élève supprimé.'); closeModal('modal-eleve'); runCalculations(); }
 
-// Notes
 function openNotesModal(id) {
   const s = students.find(x => x.id === id);
-  document.getElementById('note-eleve-id').value = s.id;
-  document.getElementById('note-nom').textContent = `${s.prenom} ${s.nom}`;
-  document.getElementById('note-classe').textContent = s.classe;
-  document.getElementById('n-math').value = s.notes.math;
-  document.getElementById('n-phys').value = s.notes.phys;
-  document.getElementById('n-fran').value = s.notes.fran;
-  document.getElementById('n-svt').value = s.notes.svt;
+  document.getElementById('note-eleve-id').value = s.id; document.getElementById('note-nom').textContent = `${s.prenom} ${s.nom}`; document.getElementById('note-classe').textContent = s.classe;
+  document.getElementById('n-math').value = s.notes.math; document.getElementById('n-phys').value = s.notes.phys; document.getElementById('n-fran').value = s.notes.fran; document.getElementById('n-svt').value = s.notes.svt;
   document.getElementById('modal-notes').classList.add('open');
 }
 
 function saveNotes() {
-  const id = parseInt(document.getElementById('note-eleve-id').value);
-  const s = students.find(x => x.id === id);
-  s.notes.math = parseFloat(document.getElementById('n-math').value) || 0;
-  s.notes.phys = parseFloat(document.getElementById('n-phys').value) || 0;
-  s.notes.fran = parseFloat(document.getElementById('n-fran').value) || 0;
-  s.notes.svt = parseFloat(document.getElementById('n-svt').value) || 0;
-  showToast('📝', `Bulletin de ${s.prenom} mis à jour.`);
-  closeModal('modal-notes'); runCalculations();
+  const id = parseInt(document.getElementById('note-eleve-id').value); const s = students.find(x => x.id === id);
+  s.notes.math = parseFloat(document.getElementById('n-math').value) || 0; s.notes.phys = parseFloat(document.getElementById('n-phys').value) || 0; s.notes.fran = parseFloat(document.getElementById('n-fran').value) || 0; s.notes.svt = parseFloat(document.getElementById('n-svt').value) || 0;
+  showToast('📝', `Bulletin de ${s.prenom} mis à jour.`); closeModal('modal-notes'); runCalculations();
 }
 
-// Orientation
 function openOrientationModal(id) {
   const s = students.find(x => x.id === id);
-  document.getElementById('ori-eleve-id').value = s.id;
-  document.getElementById('ori-nom').textContent = `${s.prenom} ${s.nom} (${s.classe})`;
-  document.getElementById('ori-moy').textContent = `${s.moyenne.toFixed(2)}/20`;
-  document.getElementById('ori-apt').textContent = s.aptitude;
-  document.getElementById('ori-filiere').value = s.filiere !== "Tronc Commun" ? s.filiere : "2nde Scientifique (C/D)";
+  document.getElementById('ori-eleve-id').value = s.id; document.getElementById('ori-nom').textContent = `${s.prenom} ${s.nom} (${s.classe})`;
+  document.getElementById('ori-moy').textContent = `${s.moyenne.toFixed(2)}/20`; document.getElementById('ori-apt').textContent = s.aptitude;
+  document.getElementById('ori-reason').textContent = s.recoReason; document.getElementById('ori-serie').value = s.recoSerie;
+  
+  const ctx = document.getElementById('ori-chart').getContext('2d');
+  if(oriChartInstance) oriChartInstance.destroy();
+  
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  Chart.defaults.color = isDark ? '#CBD5E1' : '#475569';
+  
+  oriChartInstance = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['Maths', 'Physique', 'SVT', 'Français'],
+      datasets: [{ label: 'Profil Élève', data: [s.notes.math, s.notes.phys, s.notes.svt, s.notes.fran], backgroundColor: 'rgba(124, 58, 237, 0.2)', borderColor: '#7C3AED', pointBackgroundColor: '#7C3AED', pointBorderColor: '#fff', borderWidth: 2 }]
+    },
+    options: { scales: { r: { min: 0, max: 20, ticks: { stepSize: 5, display: false } } }, plugins: { legend: { display: false } }, maintainAspectRatio: false }
+  });
   document.getElementById('modal-orientation').classList.add('open');
 }
 
 function saveOrientation() {
-  const id = parseInt(document.getElementById('ori-eleve-id').value);
-  const fil = document.getElementById('ori-filiere').value;
-  const s = students.find(x => x.id === id);
-  s.filiere = fil;
-  if(s.classe === '3ème' && fil.includes('2nde')) s.classe = '2nde';
-  showToast('🧭', `Orientation validée.`);
-  closeModal('modal-orientation'); runCalculations();
+  const id = parseInt(document.getElementById('ori-eleve-id').value); const ser = document.getElementById('ori-serie').value; const s = students.find(x => x.id === id);
+  if(ser !== "Maintien actuel") {
+    s.serie = ser; if(s.niveau === '3ème') { s.niveau = '2nde'; s.cycle = '2nd Cycle'; } 
+    const suffix = ser.match(/\(([^)]+)\)/)?.[1] || ''; s.classe = suffix ? `${s.niveau} ${suffix}` : s.niveau;
+  }
+  showToast('🧭', `Orientation validée.`); closeModal('modal-orientation'); runCalculations();
 }
 
-// Paiements
 function openPaymentModal(paymentId = null) {
   document.getElementById('modal-payment-title').textContent = paymentId !== null ? "Détails Encaissement" : "Saisir Encaissement";
-  const sel = document.getElementById('pay-eleve');
-  sel.innerHTML = students.map(s => `<option value="${s.id}">${s.prenom} ${s.nom} - Reste: ${s.totalDu - s.paye}F</option>`).join('');
-  
+  const sel = document.getElementById('pay-eleve'); sel.innerHTML = students.map(s => `<option value="${s.id}">${s.prenom} ${s.nom} - Reste: ${s.totalDu - s.paye}F</option>`).join('');
   const actionsZone = document.getElementById('payment-actions-zone');
-
   if(paymentId !== null) {
-    const p = payments.find(x => x.id === paymentId);
-    document.getElementById('edit-payment-index').value = p.id;
-    sel.value = p.eleveId; document.getElementById('pay-amount').value = p.montant;
-    document.getElementById('pay-method').value = p.methode; document.getElementById('pay-date').value = p.date;
-    
-    actionsZone.innerHTML = `
-      <button class="btn btn-ghost" onclick="printReceipt()"><span style="font-size:16px">🖨️</span> Reçu</button>
-      <button class="btn btn-danger" onclick="deletePayment(${p.id})">Annuler</button>
-    `;
+    const p = payments.find(x => x.id === paymentId); document.getElementById('edit-payment-index').value = p.id;
+    sel.value = p.eleveId; document.getElementById('pay-amount').value = p.montant; document.getElementById('pay-method').value = p.methode; document.getElementById('pay-date').value = p.date;
+    actionsZone.innerHTML = `<button class="btn btn-ghost" onclick="printReceipt()"><span style="font-size:16px">🖨️</span> Reçu</button> <button class="btn btn-danger" onclick="deletePayment(${p.id})">Annuler</button>`;
   } else {
-    document.getElementById('edit-payment-index').value = ""; document.getElementById('pay-amount').value = "";
-    document.getElementById('pay-method').value = "Virement Bancaire"; document.getElementById('pay-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('edit-payment-index').value = ""; document.getElementById('pay-amount').value = ""; document.getElementById('pay-method').value = "FedaPay (MTN/Moov)"; document.getElementById('pay-date').value = new Date().toISOString().split('T')[0];
     actionsZone.innerHTML = '';
   }
   document.getElementById('modal-payment').classList.add('open');
 }
 
 function savePayment() {
-  const pId = document.getElementById('edit-payment-index').value;
-  const eleveId = parseInt(document.getElementById('pay-eleve').value);
-  const montant = parseInt(document.getElementById('pay-amount').value);
-  const date = document.getElementById('pay-date').value;
+  const pId = document.getElementById('edit-payment-index').value; const eleveId = parseInt(document.getElementById('pay-eleve').value); const montant = parseInt(document.getElementById('pay-amount').value); const date = document.getElementById('pay-date').value;
   if(!montant || !date) return showToast('⚠️', 'Montant et date requis.');
-
   const s = students.find(x => x.id === eleveId);
   if(pId) {
-    const p = payments.find(x => x.id === parseInt(pId));
-    s.paye += (montant - p.montant); 
-    p.eleveId = eleveId; p.eleveNom = `${s.prenom} ${s.nom}`; p.montant = montant;
-    p.methode = document.getElementById('pay-method').value; p.date = date;
+    const p = payments.find(x => x.id === parseInt(pId)); s.paye += (montant - p.montant); 
+    p.eleveId = eleveId; p.eleveNom = `${s.prenom} ${s.nom}`; p.montant = montant; p.methode = document.getElementById('pay-method').value; p.date = date;
   } else {
-    payments.push({ id: Date.now(), eleveId, eleveNom: `${s.prenom} ${s.nom}`, classe: s.classe, montant, methode: document.getElementById('pay-method').value, date, statut: 'À jour' });
-    s.paye += montant;
+    payments.push({ id: Date.now(), eleveId, eleveNom: `${s.prenom} ${s.nom}`, classe: s.classe, montant, methode: document.getElementById('pay-method').value, date, statut: 'À jour' }); s.paye += montant;
   }
   s.statut = s.paye >= s.totalDu ? 'À jour' : 'Impayé partiel';
-  showToast('💰', 'Transaction comptabilisée.');
-  closeModal('modal-payment'); runCalculations();
+  showToast('💰', 'Transaction via FedaPay validée.'); closeModal('modal-payment'); runCalculations();
 }
 
 function deletePayment(pId) {
-  const p = payments.find(x => x.id === pId);
-  const s = students.find(x => x.id === p.eleveId);
+  const p = payments.find(x => x.id === pId); const s = students.find(x => x.id === p.eleveId);
   if(s) { s.paye -= p.montant; s.statut = s.paye >= s.totalDu ? 'À jour' : (s.paye <= 0 ? 'Impayé total' : 'Impayé partiel'); }
-  payments = payments.filter(x => x.id !== pId);
-  showToast('🗑️', 'Encaissement annulé.');
-  closeModal('modal-payment'); runCalculations();
+  payments = payments.filter(x => x.id !== pId); showToast('🗑️', 'Encaissement annulé.'); closeModal('modal-payment'); runCalculations();
 }
+function printReceipt() { showToast('🖨️', 'Génération du reçu officiel PDF...'); }
 
-function printReceipt() { showToast('🖨️', 'Génération du reçu PDF en cours...'); }
-
-// RH
 function openRHModal(id = null) {
   document.getElementById('modal-rh-title').textContent = id !== null ? "Fiche Enseignant" : "Nouveau Recrutement";
   const delZone = document.getElementById('rh-delete-zone');
   if(id !== null) {
-    const t = teachers.find(x => x.id === id);
-    document.getElementById('edit-rh-id').value = t.id;
+    const t = teachers.find(x => x.id === id); document.getElementById('edit-rh-id').value = t.id;
     document.getElementById('rh-nom').value = t.nom; document.getElementById('rh-matiere').value = t.matiere; document.getElementById('rh-tel').value = t.tel;
     delZone.innerHTML = `<button class="btn btn-danger" onclick="deleteRH(${t.id})">Renvoyer</button>`;
   } else {
-    document.getElementById('edit-rh-id').value = ""; document.getElementById('rh-nom').value = ""; document.getElementById('rh-tel').value = "";
-    delZone.innerHTML = '';
+    document.getElementById('edit-rh-id').value = ""; document.getElementById('rh-nom').value = ""; document.getElementById('rh-tel').value = ""; delZone.innerHTML = '';
   }
   document.getElementById('modal-rh').classList.add('open');
 }
-
 function saveRH() {
-  const idStr = document.getElementById('edit-rh-id').value;
-  const nom = document.getElementById('rh-nom').value;
+  const idStr = document.getElementById('edit-rh-id').value; const nom = document.getElementById('rh-nom').value;
   if(!nom) return showToast('⚠️', 'Nom requis');
   if(idStr) {
-    const t = teachers.find(x => x.id === parseInt(idStr));
-    t.nom = nom; t.matiere = document.getElementById('rh-matiere').value; t.tel = document.getElementById('rh-tel').value;
-    showToast('✅', `Fiche RH mise à jour.`);
+    const t = teachers.find(x => x.id === parseInt(idStr)); t.nom = nom; t.matiere = document.getElementById('rh-matiere').value; t.tel = document.getElementById('rh-tel').value; showToast('✅', `Fiche RH mise à jour.`);
   } else {
-    teachers.push({ id: Date.now(), nom, matiere: document.getElementById('rh-matiere').value, tel: document.getElementById('rh-tel').value, statut: "Actif" });
-    showToast('🎉', `Enseignant ajouté.`);
+    teachers.push({ id: Date.now(), nom, matiere: document.getElementById('rh-matiere').value, tel: document.getElementById('rh-tel').value, statut: "Actif" }); showToast('🎉', `Enseignant ajouté.`);
   }
   closeModal('modal-rh'); renderRH();
 }
 function deleteRH(id) { teachers = teachers.filter(t => t.id !== id); showToast('🗑️', 'Dossier RH supprimé.'); closeModal('modal-rh'); renderRH(); }
 
-// Communication
 function sendCampaign() {
-  const target = document.getElementById('comm-target').value;
-  const msg = document.getElementById('comm-msg').value;
+  const target = document.getElementById('comm-target').value; const msg = document.getElementById('comm-msg').value;
   if(!msg) return showToast('⚠️', 'Le message ne peut être vide.');
-  
   const dateStr = new Date().toLocaleDateString('fr-FR', {day: '2-digit', month: 'short', year: 'numeric'});
-  
-  // Ajouter en haut de la table (simulation d'historique)
-  const tbody = document.getElementById('comm-history');
-  const tr = document.createElement('tr');
-  tr.innerHTML = `<td class="text3 font-mono">${dateStr}</td><td>${target}</td><td class="text2" style="font-size:12px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${msg}</td><td><span class="badge green">Envoi en cours</span></td>`;
+  const tbody = document.getElementById('comm-history'); const tr = document.createElement('tr');
+  tr.innerHTML = `<td class="text3 font-mono">${dateStr}</td><td>${target}</td><td class="text2" style="font-size:12px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${msg}</td><td><span class="badge green">Délivré via WhatsApp</span></td>`;
   tbody.insertBefore(tr, tbody.firstChild);
-  
-  showToast('📨', 'Campagne diffusée.');
-  document.getElementById('comm-msg').value = ''; // Reset form
+  showToast('📨', 'Campagne WhatsApp diffusée avec succès.'); document.getElementById('comm-msg').value = ''; 
 }
 
-// Utils & KPIs
 function updateKPIs() {
-  document.getElementById('badge-eleves').textContent = students.length;
-  document.getElementById('kpi-total-eleves').textContent = students.length;
-  
-  const totalAttendu = students.reduce((sum, s) => sum + s.totalDu, 0);
-  const totalCollecte = payments.reduce((sum, p) => sum + p.montant, 0);
+  document.getElementById('badge-eleves').textContent = students.length; document.getElementById('kpi-total-eleves').textContent = students.length;
+  const totalAttendu = students.reduce((sum, s) => sum + s.totalDu, 0); const totalCollecte = payments.reduce((sum, p) => sum + p.montant, 0);
   document.getElementById('kpi-recouvrement-taux').textContent = totalAttendu > 0 ? ((totalCollecte / totalAttendu) * 100).toFixed(1) + '%' : '0%';
-  
-  const moyGen = students.reduce((sum, s) => sum + s.moyenne, 0) / (students.length || 1);
-  document.getElementById('kpi-moyenne-gen').textContent = moyGen.toFixed(2);
-  
-  const risquesEleves = students.filter(s => s.risque === 'Élevé').length;
-  document.getElementById('kpi-risque-total').textContent = risquesEleves;
-  
-  const impayes = students.filter(s => s.statut !== 'À jour').length;
-  document.getElementById('badge-impayes').textContent = impayes;
+  const moyGen = students.reduce((sum, s) => sum + s.moyenne, 0) / (students.length || 1); document.getElementById('kpi-moyenne-gen').textContent = moyGen.toFixed(2);
+  document.getElementById('kpi-risque-total').textContent = students.filter(s => s.risque === 'Élevé').length; document.getElementById('badge-impayes').textContent = students.filter(s => s.statut !== 'À jour').length;
 }
 
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
