@@ -1,0 +1,1992 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ÉduGest Bénin — Tableau de Bord</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@400;500;600;700&family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #09090D;
+  --bg2: #0F0F15;
+  --bg3: #141419;
+  --bg4: #1A1A22;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --gold: #C9A84C;
+  --gold2: #E8C97A;
+  --gold-dim: rgba(201,168,76,0.12);
+  --green: #00A36C;
+  --green-dim: rgba(0,163,108,0.12);
+  --red: #E05757;
+  --red-dim: rgba(224,87,87,0.1);
+  --amber: #E8943A;
+  --amber-dim: rgba(232,148,58,0.1);
+  --text: #F0EDE8;
+  --text2: #9896A4;
+  --text3: #5C5A65;
+  --sidebar-w: 256px;
+  --topbar-h: 64px;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.6);
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; -webkit-font-smoothing: antialiased; }
+body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; overflow-x: hidden; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 2px; }
+input, select, textarea, button { font-family: inherit; }
+a { text-decoration: none; color: inherit; }
+
+/* ─── GRAIN OVERLAY ─── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9998; opacity: 0.4;
+}
+
+/* ─── LOGIN ─── */
+#login-screen {
+  position: fixed; inset: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse 60% 80% at 50% 0%, rgba(201,168,76,0.06) 0%, transparent 70%), var(--bg);
+}
+.login-card {
+  width: 420px;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 48px 40px;
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(201,168,76,0.05);
+  animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+.login-logo {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 32px;
+}
+.login-logo-mark {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant', serif;
+  font-weight: 700; font-size: 20px; color: #09090D;
+}
+.login-logo-text { font-family: 'Cormorant', serif; font-size: 24px; font-weight: 600; letter-spacing: -0.5px; }
+.login-logo-text span { color: var(--gold); }
+.login-headline { font-family: 'Cormorant', serif; font-size: 28px; font-weight: 500; line-height: 1.2; margin-bottom: 8px; }
+.login-sub { color: var(--text2); font-size: 13px; margin-bottom: 32px; }
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; }
+.form-input {
+  width: 100%; padding: 12px 16px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); color: var(--text); font-size: 14px;
+  transition: var(--transition); outline: none;
+}
+.form-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-dim); }
+.form-input::placeholder { color: var(--text3); }
+.btn-primary {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+  border: none; border-radius: var(--radius-sm);
+  color: #09090D; font-weight: 700; font-size: 14px;
+  cursor: pointer; transition: var(--transition);
+  letter-spacing: 0.03em; margin-top: 8px;
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(201,168,76,0.3); }
+.btn-primary:active { transform: translateY(0); }
+.login-hint { text-align: center; margin-top: 20px; font-size: 12px; color: var(--text3); }
+.login-badge { display: flex; align-items: center; gap: 6px; justify-content: center; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+.login-badge-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+.login-badge span { font-size: 11px; color: var(--text3); }
+
+/* ─── APP SHELL ─── */
+#app { display: none; height: 100vh; }
+#app.visible { display: flex; }
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width: var(--sidebar-w); min-width: var(--sidebar-w);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  height: 100vh; overflow-y: auto; overflow-x: hidden;
+  position: relative;
+}
+.sidebar::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.3;
+}
+.sidebar-logo {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo-inner { display: flex; align-items: center; gap: 10px; }
+.logo-mark {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant', serif; font-weight: 700; font-size: 18px; color: #09090D;
+  flex-shrink: 0;
+}
+.logo-texts { min-width: 0; }
+.logo-name { font-family: 'Cormorant', serif; font-size: 18px; font-weight: 700; letter-spacing: -0.3px; line-height: 1.1; }
+.logo-name span { color: var(--gold); }
+.logo-school { font-size: 10px; color: var(--text3); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.sidebar-section { padding: 16px 12px 8px; }
+.sidebar-section-label { font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; padding: 0 8px; margin-bottom: 6px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: var(--radius-sm);
+  cursor: pointer; transition: var(--transition);
+  color: var(--text2); font-size: 13px; font-weight: 500;
+  position: relative; user-select: none;
+}
+.nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+.nav-item.active { background: var(--gold-dim); color: var(--gold); font-weight: 600; }
+.nav-item.active::before {
+  content: ''; position: absolute; left: 0; top: 20%; bottom: 20%;
+  width: 3px; background: var(--gold); border-radius: 0 2px 2px 0;
+}
+.nav-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto; background: var(--red); color: white;
+  font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px;
+  min-width: 20px; text-align: center;
+}
+.nav-badge.green { background: var(--green); }
+.sidebar-footer {
+  margin-top: auto; padding: 12px;
+  border-top: 1px solid var(--border);
+}
+.user-tile {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px; border-radius: var(--radius-sm);
+  cursor: pointer; transition: var(--transition);
+}
+.user-tile:hover { background: var(--bg3); }
+.user-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold) 0%, #8B6914 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px; color: #09090D; flex-shrink: 0;
+}
+.user-info { min-width: 0; }
+.user-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-role { font-size: 11px; color: var(--text3); }
+
+/* ─── MAIN ─── */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+/* ─── TOPBAR ─── */
+.topbar {
+  height: var(--topbar-h); min-height: var(--topbar-h);
+  padding: 0 28px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 16px;
+  background: var(--bg); position: relative;
+}
+.topbar-breadcrumb { display: flex; align-items: center; gap: 8px; flex: 1; }
+.breadcrumb-root { font-size: 12px; color: var(--text3); }
+.breadcrumb-sep { color: var(--text3); font-size: 10px; }
+.breadcrumb-current { font-size: 14px; font-weight: 700; color: var(--text); }
+.topbar-actions { display: flex; align-items: center; gap: 12px; }
+.topbar-btn {
+  width: 36px; height: 36px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 16px; transition: var(--transition); color: var(--text2);
+  position: relative;
+}
+.topbar-btn:hover { background: var(--bg4); color: var(--text); border-color: var(--border2); }
+.notif-dot {
+  position: absolute; top: 7px; right: 7px;
+  width: 7px; height: 7px; background: var(--red); border-radius: 50%;
+  border: 2px solid var(--bg);
+}
+.topbar-date { font-size: 12px; color: var(--text3); font-family: 'DM Mono', monospace; }
+.topbar-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold) 0%, #8B6914 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 12px; color: #09090D; cursor: pointer;
+  border: 2px solid rgba(201,168,76,0.3);
+}
+
+/* ─── CONTENT ─── */
+.content { flex: 1; overflow-y: auto; padding: 28px; }
+
+/* ─── PAGE HEADER ─── */
+.page-header { margin-bottom: 28px; }
+.page-title { font-family: 'Cormorant', serif; font-size: 32px; font-weight: 600; line-height: 1; margin-bottom: 6px; }
+.page-title span { color: var(--gold); }
+.page-subtitle { font-size: 13px; color: var(--text2); }
+
+/* ─── CARDS / GRID ─── */
+.grid { display: grid; gap: 16px; }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-2-1 { grid-template-columns: 2fr 1fr; }
+.grid-1-1-2 { grid-template-columns: 1fr 1fr 2fr; }
+
+.card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  transition: var(--transition);
+  position: relative; overflow: hidden;
+}
+.card:hover { border-color: var(--border2); }
+.card-accent::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+}
+.card-accent.gold::before { background: linear-gradient(90deg, var(--gold), var(--gold2)); }
+.card-accent.green::before { background: var(--green); }
+.card-accent.red::before { background: var(--red); }
+.card-accent.amber::before { background: var(--amber); }
+
+.kpi-card { cursor: default; }
+.kpi-label { font-size: 11px; font-weight: 700; color: var(--text3); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.kpi-icon { font-size: 15px; }
+.kpi-value { font-family: 'Cormorant', serif; font-size: 40px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+.kpi-value.gold { color: var(--gold); }
+.kpi-value.green { color: var(--green); }
+.kpi-value.red { color: var(--red); }
+.kpi-value.amber { color: var(--amber); }
+.kpi-meta { font-size: 12px; color: var(--text2); display: flex; align-items: center; gap: 6px; }
+.kpi-trend { font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 4px; }
+.kpi-trend.up { background: var(--green-dim); color: var(--green); }
+.kpi-trend.down { background: var(--red-dim); color: var(--red); }
+
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.card-title { font-size: 13px; font-weight: 700; color: var(--text); }
+.card-action { font-size: 12px; color: var(--gold); cursor: pointer; transition: var(--transition); font-weight: 500; }
+.card-action:hover { color: var(--gold2); }
+
+/* ─── CHARTS ─── */
+.chart-container { position: relative; }
+
+/* ─── TABLE ─── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  padding: 10px 14px; text-align: left;
+  font-size: 11px; font-weight: 700; color: var(--text3);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+tbody td { padding: 12px 14px; font-size: 13px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: var(--transition); cursor: pointer; }
+tbody tr:hover { background: rgba(255,255,255,0.03); }
+tbody tr:hover td:first-child { color: var(--gold); }
+
+/* ─── BADGES ─── */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 8px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+}
+.badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.badge.green { background: var(--green-dim); color: var(--green); }
+.badge.red { background: var(--red-dim); color: var(--red); }
+.badge.amber { background: var(--amber-dim); color: var(--amber); }
+.badge.gold { background: var(--gold-dim); color: var(--gold); }
+.badge.gray { background: rgba(255,255,255,0.06); color: var(--text2); }
+
+/* ─── BUTTONS ─── */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 16px; border-radius: var(--radius-sm);
+  font-weight: 600; font-size: 13px; cursor: pointer;
+  transition: var(--transition); border: none; outline: none;
+}
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+  color: #09090D;
+}
+.btn-gold:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(201,168,76,0.25); }
+.btn-ghost {
+  background: transparent; color: var(--text2);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { background: var(--bg4); color: var(--text); border-color: var(--border2); }
+.btn-danger { background: var(--red-dim); color: var(--red); border: 1px solid rgba(224,87,87,0.2); }
+.btn-danger:hover { background: rgba(224,87,87,0.2); }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-icon { padding: 8px; }
+
+/* ─── SEARCH + FILTER BAR ─── */
+.toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.search-wrap { position: relative; flex: 1; min-width: 200px; }
+.search-wrap input { width: 100%; padding: 9px 12px 9px 36px; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-size: 13px; outline: none; transition: var(--transition); }
+.search-wrap input:focus { border-color: var(--border2); background: var(--bg4); }
+.search-wrap input::placeholder { color: var(--text3); }
+.search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); font-size: 14px; pointer-events: none; }
+.filter-select { padding: 8px 12px; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text2); font-size: 13px; outline: none; cursor: pointer; }
+.filter-select:focus { border-color: var(--border2); }
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 16px; padding: 32px; width: 520px; max-width: 95vw;
+  box-shadow: var(--shadow-lg);
+  transform: scale(0.96) translateY(10px);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.modal-overlay.open .modal { transform: none; }
+.modal-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; }
+.modal-title { font-family: 'Cormorant', serif; font-size: 22px; font-weight: 600; }
+.modal-subtitle { font-size: 12px; color: var(--text2); margin-top: 3px; }
+.modal-close { background: none; border: none; color: var(--text3); font-size: 20px; cursor: pointer; padding: 0; line-height: 1; transition: var(--transition); }
+.modal-close:hover { color: var(--text); }
+.modal-body { }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal-footer { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+
+/* ─── ALERT TOAST ─── */
+#toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+  display: flex; align-items: center; gap: 12px;
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 14px 18px;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(20px); opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+#toast.show { transform: none; opacity: 1; }
+.toast-icon { font-size: 18px; }
+.toast-text { font-size: 13px; font-weight: 500; }
+
+/* ─── PRESENCE MODULE ─── */
+.presence-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.presence-card {
+  background: var(--bg4); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: var(--transition);
+}
+.presence-card.absent { border-color: rgba(224,87,87,0.3); background: var(--red-dim); }
+.presence-card.present { border-color: rgba(0,163,108,0.25); }
+.presence-name { font-size: 12px; font-weight: 600; }
+.presence-num { font-size: 10px; color: var(--text3); margin-top: 2px; font-family: 'DM Mono', monospace; }
+.toggle-switch { position: relative; width: 38px; height: 22px; cursor: pointer; flex-shrink: 0; }
+.toggle-switch input { display: none; }
+.toggle-track {
+  position: absolute; inset: 0; background: var(--bg3);
+  border: 1px solid var(--border2); border-radius: 11px;
+  transition: var(--transition);
+}
+.toggle-switch input:checked ~ .toggle-track { background: var(--green); border-color: var(--green); }
+.toggle-thumb {
+  position: absolute; top: 3px; left: 3px;
+  width: 14px; height: 14px; background: var(--text2);
+  border-radius: 50%; transition: var(--transition);
+}
+.toggle-switch input:checked ~ .toggle-track .toggle-thumb { left: 19px; background: white; }
+
+/* ─── FINANCE ─── */
+.amount-cell { font-family: 'DM Mono', monospace; font-size: 13px; }
+.payment-method { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.pm-icon { width: 22px; height: 14px; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 700; }
+.pm-mtn { background: #FFCC00; color: #1A1A1A; }
+.pm-moov { background: #0070C0; color: white; }
+.pm-cash { background: var(--bg4); color: var(--text2); border: 1px solid var(--border); }
+
+/* ─── PROGRESS BAR ─── */
+.progress-wrap { background: var(--bg4); border-radius: 4px; height: 6px; overflow: hidden; }
+.progress-bar { height: 100%; border-radius: 4px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* ─── NOTE GRID ─── */
+.note-grid { width: 100%; border-collapse: collapse; }
+.note-grid th { padding: 8px 12px; text-align: center; font-size: 11px; font-weight: 700; color: var(--text3); border-bottom: 1px solid var(--border); letter-spacing: 0.04em; text-transform: uppercase; }
+.note-grid th:first-child { text-align: left; width: 180px; }
+.note-grid td { padding: 8px 4px; border-bottom: 1px solid var(--border); text-align: center; }
+.note-grid td:first-child { text-align: left; padding: 8px 12px; font-size: 12px; font-weight: 500; }
+.note-input {
+  width: 52px; text-align: center;
+  background: var(--bg4); border: 1px solid var(--border);
+  border-radius: 6px; padding: 5px; color: var(--text); font-size: 12px;
+  transition: var(--transition); outline: none; font-family: 'DM Mono', monospace;
+}
+.note-input:focus { border-color: var(--gold); background: var(--bg3); }
+.note-avg { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 700; }
+.note-avg.high { color: var(--green); }
+.note-avg.mid { color: var(--amber); }
+.note-avg.low { color: var(--red); }
+
+/* ─── COMM MODULE ─── */
+.msg-list { display: flex; flex-direction: column; gap: 2px; }
+.msg-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px; border-radius: var(--radius-sm);
+  cursor: pointer; transition: var(--transition);
+}
+.msg-item:hover { background: var(--bg4); }
+.msg-item.unread { background: rgba(201,168,76,0.05); }
+.msg-avatar-sm {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px;
+}
+.msg-content { flex: 1; min-width: 0; }
+.msg-from { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.msg-item.unread .msg-from { color: var(--gold); }
+.msg-preview { font-size: 12px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.msg-time { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; flex-shrink: 0; }
+.unread-dot { width: 7px; height: 7px; background: var(--gold); border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+
+/* ─── TABS ─── */
+.tabs { display: flex; gap: 2px; background: var(--bg4); border-radius: var(--radius-sm); padding: 3px; margin-bottom: 20px; }
+.tab { flex: 1; text-align: center; padding: 7px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: var(--transition); color: var(--text2); }
+.tab.active { background: var(--bg3); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+
+/* ─── STAT ROW ─── */
+.stat-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.stat-row:last-child { border-bottom: none; }
+.stat-row-label { flex: 1; font-size: 12px; color: var(--text2); }
+.stat-row-bar { flex: 2; }
+.stat-row-val { font-size: 12px; font-weight: 700; color: var(--text); font-family: 'DM Mono', monospace; width: 40px; text-align: right; }
+
+/* ─── ALERT STRIP ─── */
+.alert-strip {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; border-radius: var(--radius-sm);
+  margin-bottom: 10px; font-size: 12px;
+}
+.alert-strip.red { background: var(--red-dim); border: 1px solid rgba(224,87,87,0.2); color: var(--red); }
+.alert-strip.amber { background: var(--amber-dim); border: 1px solid rgba(232,148,58,0.2); color: var(--amber); }
+.alert-strip.green { background: var(--green-dim); border: 1px solid rgba(0,163,108,0.2); color: var(--green); }
+.alert-icon { font-size: 15px; flex-shrink: 0; }
+.alert-text { flex: 1; font-weight: 500; }
+.alert-action { font-weight: 700; cursor: pointer; text-decoration: underline; }
+
+/* ─── AVATAR COLORS ─── */
+.av-1{background:linear-gradient(135deg,#6366f1,#8b5cf6)} .av-2{background:linear-gradient(135deg,#ec4899,#f43f5e)} .av-3{background:linear-gradient(135deg,#10b981,#059669)} .av-4{background:linear-gradient(135deg,#f59e0b,#d97706)} .av-5{background:linear-gradient(135deg,#3b82f6,#2563eb)} .av-6{background:linear-gradient(135deg,#14b8a6,#0891b2)} .av-7{background:linear-gradient(135deg,#a78bfa,#7c3aed)} .av-8{background:linear-gradient(135deg,#fb7185,#e11d48)}
+
+/* ─── EMPTY STATE ─── */
+.empty-state { text-align: center; padding: 48px 24px; }
+.empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.4; }
+.empty-state p { font-size: 13px; color: var(--text3); }
+
+/* ─── PERSONNEL ─── */
+.staff-card {
+  background: var(--bg4); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+  display: flex; align-items: center; gap: 14px;
+  transition: var(--transition);
+}
+.staff-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.staff-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; color: white; flex-shrink: 0; }
+.staff-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.staff-role { font-size: 11px; color: var(--text3); }
+.staff-subject { font-size: 11px; color: var(--gold); margin-top: 4px; }
+
+/* ─── PARAM ─── */
+.param-section { margin-bottom: 28px; }
+.param-section-title { font-size: 12px; font-weight: 700; color: var(--text3); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.param-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.param-row:last-child { border-bottom: none; }
+.param-label { font-size: 13px; font-weight: 500; }
+.param-desc { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+/* ─── VIEW TRANSITIONS ─── */
+.view { display: none; animation: fadeIn 0.25s ease; }
+.view.active { display: block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1200px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  :root { --sidebar-w: 0px; }
+  .sidebar { position: fixed; left: -260px; z-index: 100; transition: left 0.3s; width: 260px; }
+  .grid-4, .grid-3, .grid-2, .grid-2-1 { grid-template-columns: 1fr; }
+}
+
+/* ─── SCROLLBAR CUSTOM ─── */
+.content::-webkit-scrollbar { width: 4px; }
+.content::-webkit-scrollbar-thumb { background: var(--bg4); }
+
+/* ─── BULLETIN PREVIEW ─── */
+.bulletin-preview {
+  background: #fff; color: #1a1a1a; border-radius: var(--radius);
+  padding: 24px; font-family: 'Times New Roman', serif; font-size: 12px;
+}
+.bulletin-header { text-align: center; margin-bottom: 16px; border-bottom: 2px solid #1a1a1a; padding-bottom: 12px; }
+.bulletin-school-name { font-size: 16px; font-weight: 700; text-transform: uppercase; }
+.bulletin-title { font-size: 13px; font-weight: 600; margin-top: 4px; }
+.bulletin-info { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; font-size: 11px; }
+.bulletin-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.bulletin-table th, .bulletin-table td { border: 1px solid #999; padding: 5px 8px; }
+.bulletin-table th { background: #f0f0f0; font-weight: 700; }
+.bulletin-mention { margin-top: 12px; font-size: 13px; font-weight: 700; text-align: center; padding: 8px; border: 2px solid #1a1a1a; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ LOGIN ══════════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark">É</div>
+      <div class="login-logo-text">Édu<span>Gest</span></div>
+      <span style="margin-left:auto;font-size:18px">🇧🇯</span>
+    </div>
+    <div class="login-headline">Bienvenue,<br>Directeur.</div>
+    <p class="login-sub">Accédez à votre tableau de bord souverain.</p>
+    <div class="form-group">
+      <label class="form-label">Identifiant établissement</label>
+      <input class="form-input" type="text" placeholder="lafontaine@edugest.bj" id="login-email" value="lafontaine@edugest.bj">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Mot de passe</label>
+      <input class="form-input" type="password" placeholder="••••••••" id="login-pass" value="demo2026">
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Accéder au tableau de bord →</button>
+    <p class="login-hint">Identifiants de démo pré-remplis — cliquez simplement</p>
+    <div class="login-badge">
+      <div class="login-badge-dot"></div>
+      <span>Hébergement souverain Bénin · Certifié MEMP · AES-256</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ APP SHELL ══════════════════ -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-inner">
+        <div class="logo-mark">É</div>
+        <div class="logo-texts">
+          <div class="logo-name">Édu<span>Gest</span></div>
+          <div class="logo-school" id="school-name-sidebar">CS La Fontaine · Cotonou</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Principal</div>
+      <div class="nav-item active" onclick="navigate('dashboard')">
+        <span class="nav-icon">📊</span> Tableau de Bord
+      </div>
+      <div class="nav-item" onclick="navigate('eleves')">
+        <span class="nav-icon">👥</span> Élèves
+        <span class="nav-badge green" id="badge-eleves">153</span>
+      </div>
+      <div class="nav-item" onclick="navigate('pedagogie')">
+        <span class="nav-icon">📚</span> Pédagogie
+      </div>
+      <div class="nav-item" onclick="navigate('presences')">
+        <span class="nav-icon">✅</span> Présences
+        <span class="nav-badge" id="badge-presences">3</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Gestion</div>
+      <div class="nav-item" onclick="navigate('finance')">
+        <span class="nav-icon">💰</span> Finance
+        <span class="nav-badge" id="badge-finance">12</span>
+      </div>
+      <div class="nav-item" onclick="navigate('communication')">
+        <span class="nav-icon">📱</span> Communication
+        <span class="nav-badge">5</span>
+      </div>
+      <div class="nav-item" onclick="navigate('personnel')">
+        <span class="nav-icon">👨‍🏫</span> Personnel
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Système</div>
+      <div class="nav-item" onclick="navigate('parametres')">
+        <span class="nav-icon">⚙️</span> Paramètres
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-tile">
+        <div class="user-avatar">FA</div>
+        <div class="user-info">
+          <div class="user-name">Dr. Adégboyé Franck</div>
+          <div class="user-role">Directeur Général</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-breadcrumb">
+        <span class="breadcrumb-root">ÉduGest</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current" id="breadcrumb">Tableau de Bord</span>
+      </div>
+      <div class="topbar-actions">
+        <span class="topbar-date" id="topbar-date"></span>
+        <div class="topbar-btn" onclick="showToast('🔍','Recherche globale activée')">🔍</div>
+        <div class="topbar-btn" onclick="navigate('communication')" style="position:relative">
+          🔔 <span class="notif-dot"></span>
+        </div>
+        <div class="topbar-avatar">FA</div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ── DASHBOARD ── -->
+      <div class="view active" id="view-dashboard">
+        <div class="page-header">
+          <div class="page-title">Bonjour, <span>Directeur</span> 👋</div>
+          <div class="page-subtitle">Année scolaire 2025-2026 · T2 · Lundi 09 Mars 2026</div>
+        </div>
+
+        <!-- Alerts -->
+        <div id="dashboard-alerts">
+          <div class="alert-strip amber">
+            <span class="alert-icon">⚠️</span>
+            <span class="alert-text">12 familles ont des impayés de plus de 30 jours — Trimestre 2</span>
+            <span class="alert-action" onclick="navigate('finance')">Voir →</span>
+          </div>
+          <div class="alert-strip red">
+            <span class="alert-icon">🚨</span>
+            <span class="alert-text">3 élèves ont dépassé 5 absences non justifiées ce mois</span>
+            <span class="alert-action" onclick="navigate('presences')">Gérer →</span>
+          </div>
+        </div>
+
+        <!-- KPI Row -->
+        <div class="grid grid-4" style="margin-top:16px">
+          <div class="card card-accent gold kpi-card">
+            <div class="kpi-label"><span class="kpi-icon">👥</span> Total Élèves</div>
+            <div class="kpi-value gold">153</div>
+            <div class="kpi-meta"><span class="kpi-trend up">+7 ce trim.</span> 6 classes actives</div>
+          </div>
+          <div class="card card-accent green kpi-card">
+            <div class="kpi-label"><span class="kpi-icon">✅</span> Taux Présence</div>
+            <div class="kpi-value green">94.2%</div>
+            <div class="kpi-meta"><span class="kpi-trend up">+1.3%</span> vs mois dernier</div>
+          </div>
+          <div class="card card-accent amber kpi-card">
+            <div class="kpi-label"><span class="kpi-icon">💰</span> Recouvrement T2</div>
+            <div class="kpi-value amber">78.5%</div>
+            <div class="kpi-meta"><span class="kpi-trend down">–4.2%</span> 12 impayés actifs</div>
+          </div>
+          <div class="card card-accent red kpi-card">
+            <div class="kpi-label"><span class="kpi-icon">📈</span> MRR</div>
+            <div class="kpi-value" style="color:var(--text)">2.29M</div>
+            <div class="kpi-meta"><span style="font-family:'DM Mono',monospace;font-size:11px">FCFA · mars 2026</span></div>
+          </div>
+        </div>
+
+        <!-- Charts row -->
+        <div class="grid grid-2-1" style="margin-top:16px">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📊 Recouvrement des frais — 2025-2026</span>
+              <span class="card-action">Exporter</span>
+            </div>
+            <div class="chart-container" style="height:220px">
+              <canvas id="chart-recouvrement"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">🎓 Répartition par niveau</span>
+            </div>
+            <div class="chart-container" style="height:180px;display:flex;align-items:center;justify-content:center">
+              <canvas id="chart-niveaux" style="max-height:180px"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom row -->
+        <div class="grid grid-2" style="margin-top:16px">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📉 Taux de présence par classe</span>
+              <span class="card-action" onclick="navigate('presences')">Détail</span>
+            </div>
+            <div id="presence-stats"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📬 Activité récente</span>
+              <span class="card-action" onclick="navigate('communication')">Tout voir</span>
+            </div>
+            <div id="recent-activity"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ÉLÈVES ── -->
+      <div class="view" id="view-eleves">
+        <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div>
+            <div class="page-title">Gestion des <span>Élèves</span></div>
+            <div class="page-subtitle">153 élèves inscrits · 6 classes · Année 2025-2026</div>
+          </div>
+          <button class="btn btn-gold" onclick="openModal('modal-add-eleve')">+ Inscrire un élève</button>
+        </div>
+        <div class="card">
+          <div class="toolbar">
+            <div class="search-wrap">
+              <span class="search-icon">🔍</span>
+              <input type="text" placeholder="Rechercher un élève..." oninput="filterEleves(this.value)" id="search-eleve">
+            </div>
+            <select class="filter-select" onchange="filterElevesClasse(this.value)" id="filter-classe">
+              <option value="">Toutes les classes</option>
+              <option>6ème A</option><option>6ème B</option><option>5ème A</option>
+              <option>4ème A</option><option>3ème A</option><option>3ème B</option>
+            </select>
+            <select class="filter-select">
+              <option>Tous les statuts</option>
+              <option>Actif</option><option>Impayé</option>
+            </select>
+            <button class="btn btn-ghost btn-sm" onclick="showToast('📤','Export Excel en cours...')">📤 Exporter</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Élève</th><th>Matricule</th><th>Classe</th>
+                  <th>Tuteur</th><th>Contact</th><th>Statut</th><th>Moy. Gén.</th><th></th>
+                </tr>
+              </thead>
+              <tbody id="eleves-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PÉDAGOGIE ── -->
+      <div class="view" id="view-pedagogie">
+        <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div>
+            <div class="page-title">Gestion <span>Pédagogique</span></div>
+            <div class="page-subtitle">Saisie des notes · Bulletins · Emplois du temps</div>
+          </div>
+          <button class="btn btn-gold" onclick="showToast('📋','Génération bulletins en cours...')">📋 Générer bulletins PDF</button>
+        </div>
+        <div class="tabs" id="peda-tabs">
+          <div class="tab active" onclick="switchPedaTab('notes',this)">Notes & Moyennes</div>
+          <div class="tab" onclick="switchPedaTab('bulletin',this)">Aperçu Bulletin</div>
+          <div class="tab" onclick="switchPedaTab('edt',this)">Emploi du temps</div>
+        </div>
+
+        <div id="peda-tab-notes">
+          <div class="card" style="margin-bottom:16px">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <div class="kpi-label" style="margin:0">Classe :</div>
+              <select class="filter-select" id="peda-classe" onchange="renderNotes()">
+                <option>6ème A</option><option>6ème B</option><option>5ème A</option>
+                <option>4ème A</option><option>3ème A</option><option>3ème B</option>
+              </select>
+              <div class="kpi-label" style="margin:0">Matière :</div>
+              <select class="filter-select" id="peda-matiere" onchange="renderNotes()">
+                <option>Mathématiques</option><option>Français</option><option>Sciences</option>
+                <option>Histoire-Géo</option><option>Anglais</option><option>SVT</option><option>EPS</option>
+              </select>
+              <div class="kpi-label" style="margin:0">Séquence :</div>
+              <select class="filter-select">
+                <option>Composition T2</option><option>Devoir T2</option><option>Interrogation</option>
+              </select>
+              <button class="btn btn-gold btn-sm" onclick="saveNotes()">💾 Enregistrer</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title" id="notes-card-title">Notes — 6ème A · Mathématiques · Composition T2</span>
+              <span id="notes-class-avg" style="font-family:'DM Mono',monospace;font-size:13px;color:var(--gold)"></span>
+            </div>
+            <div class="table-wrap">
+              <table class="note-grid" id="note-table"></table>
+            </div>
+          </div>
+        </div>
+
+        <div id="peda-tab-bulletin" style="display:none">
+          <div style="display:flex;gap:16px;align-items:flex-start">
+            <div style="flex:1">
+              <div class="card" style="margin-bottom:12px">
+                <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+                  <div class="kpi-label" style="margin:0">Élève :</div>
+                  <select class="filter-select" id="bull-eleve" onchange="renderBulletin()">
+                    <option value="0">Abiodun Fatima</option><option value="1">Assogba Marc</option>
+                    <option value="2">Gbèdo Kokou</option><option value="3">Sohouénou Grâce</option>
+                    <option value="4">Zinsou Armelle</option>
+                  </select>
+                  <select class="filter-select">
+                    <option>Trimestre 2</option><option>Trimestre 1</option>
+                  </select>
+                  <button class="btn btn-gold btn-sm" onclick="showToast('📄','Bulletin PDF téléchargé')">📥 Télécharger PDF</button>
+                  <button class="btn btn-ghost btn-sm" onclick="showToast('📱','Bulletin envoyé sur WhatsApp du parent')">📱 Envoyer WhatsApp</button>
+                </div>
+              </div>
+              <div id="bulletin-preview-wrap"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="peda-tab-edt" style="display:none">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📅 Emploi du temps — 6ème A · Semaine 11</span>
+              <button class="btn btn-ghost btn-sm">Modifier</button>
+            </div>
+            <div id="edt-grid" style="overflow-x:auto"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PRÉSENCES ── -->
+      <div class="view" id="view-presences">
+        <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div>
+            <div class="page-title">Appel & <span>Présences</span></div>
+            <div class="page-subtitle" id="presence-date-display">Lundi 09 Mars 2026 · Appel du matin</div>
+          </div>
+          <button class="btn btn-gold" onclick="validatePresence()">✅ Valider & Notifier les parents</button>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <div class="kpi-label" style="margin:0">Classe :</div>
+            <select class="filter-select" id="presence-classe" onchange="renderPresences()">
+              <option>6ème A</option><option>6ème B</option><option>5ème A</option>
+              <option>4ème A</option><option>3ème A</option><option>3ème B</option>
+            </select>
+            <div id="presence-counter" style="margin-left:auto;font-size:12px;color:var(--text2)"></div>
+          </div>
+        </div>
+        <div class="presence-grid" id="presence-grid"></div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-header"><span class="card-title">📊 Absences chroniques ce mois</span></div>
+          <div id="absences-chroniques"></div>
+        </div>
+      </div>
+
+      <!-- ── FINANCE ── -->
+      <div class="view" id="view-finance">
+        <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div>
+            <div class="page-title">Gestion <span>Financière</span></div>
+            <div class="page-subtitle">Trimestre 2 · 153 élèves · Tarif : 35 000 FCFA/mois</div>
+          </div>
+          <button class="btn btn-gold" onclick="openModal('modal-add-payment')">+ Enregistrer un paiement</button>
+        </div>
+
+        <div class="grid grid-3" style="margin-bottom:16px">
+          <div class="card card-accent green">
+            <div class="kpi-label">Recettes T2 collectées</div>
+            <div class="kpi-value green" style="font-size:28px">4 236 000 <span style="font-size:14px;color:var(--text2)">FCFA</span></div>
+            <div class="progress-wrap" style="margin-top:12px"><div class="progress-bar" style="width:78.5%;background:var(--green)"></div></div>
+            <div style="font-size:11px;color:var(--text2);margin-top:6px">78.5% de l'objectif trimestriel</div>
+          </div>
+          <div class="card card-accent red">
+            <div class="kpi-label">Impayés actifs</div>
+            <div class="kpi-value red" style="font-size:28px">1 161 000 <span style="font-size:14px;color:var(--text2)">FCFA</span></div>
+            <div style="font-size:12px;color:var(--text2);margin-top:8px">12 familles · Relances envoyées</div>
+          </div>
+          <div class="card card-accent gold">
+            <div class="kpi-label">Paiements Mobile Money</div>
+            <div class="kpi-value gold" style="font-size:28px">67%</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:8px">MTN 48% · Moov 19% · Cash 33%</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Historique des paiements — T2 2026</span>
+            <button class="btn btn-ghost btn-sm" onclick="showToast('📤','Export comptable Excel généré')">📤 Export comptable</button>
+          </div>
+          <div class="toolbar">
+            <div class="search-wrap">
+              <span class="search-icon">🔍</span>
+              <input type="text" placeholder="Rechercher famille ou élève..." oninput="filterPayments(this.value)">
+            </div>
+            <select class="filter-select" onchange="filterPaymentStatus(this.value)">
+              <option value="">Tous les statuts</option>
+              <option value="payé">Payé</option>
+              <option value="partiel">Partiel</option>
+              <option value="impayé">Impayé</option>
+            </select>
+            <select class="filter-select">
+              <option>Tous modes</option>
+              <option>MTN Mobile Money</option>
+              <option>Moov Money</option>
+              <option>Espèces</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Élève</th><th>Classe</th><th>Famille</th><th>Montant T2</th>
+                  <th>Payé</th><th>Restant</th><th>Mode</th><th>Date</th><th>Statut</th><th></th>
+                </tr>
+              </thead>
+              <tbody id="payments-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── COMMUNICATION ── -->
+      <div class="view" id="view-communication">
+        <div class="page-header">
+          <div class="page-title">Centre de <span>Communication</span></div>
+          <div class="page-subtitle">Messages parents · SMS · Notifications WhatsApp · Alertes</div>
+        </div>
+        <div class="grid grid-2-1" style="height:calc(100vh - 220px);min-height:400px">
+          <div class="card" style="display:flex;flex-direction:column;overflow:hidden">
+            <div class="card-header">
+              <span class="card-title">📬 Boîte de réception</span>
+              <button class="btn btn-gold btn-sm" onclick="openModal('modal-new-message')">✍️ Nouveau message</button>
+            </div>
+            <div class="tabs" id="comm-tabs">
+              <div class="tab active" onclick="switchCommTab('all',this)">Tous</div>
+              <div class="tab" onclick="switchCommTab('parents',this)">Parents</div>
+              <div class="tab" onclick="switchCommTab('teachers',this)">Enseignants</div>
+            </div>
+            <div class="msg-list" id="msg-list" style="overflow-y:auto;flex:1"></div>
+          </div>
+          <div class="card" style="display:flex;flex-direction:column">
+            <div class="card-header">
+              <span class="card-title">📣 Diffusions rapides</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div class="alert-strip amber">
+                <span class="alert-icon">📅</span>
+                <span class="alert-text">5 parents n'ont pas ouvert la convocation T2</span>
+              </div>
+              <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="showToast('📱','SMS de rappel envoyé à 12 familles')">📱 Relance impayés T2 (12 fam.)</button>
+              <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="showToast('📢','Bulletin de notes envoyé à 153 parents')">📋 Envoi bulletins WhatsApp · Tous</button>
+              <button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="showToast('🔔','Rappel convocation envoyé')">🔔 Rappel réunion parents (15/03)</button>
+              <div style="margin-top:8px;padding-top:16px;border-top:1px solid var(--border)">
+                <div class="kpi-label" style="margin-bottom:10px">Composer un SMS ciblé</div>
+                <select class="filter-select" style="width:100%;margin-bottom:8px">
+                  <option>Toutes les classes</option>
+                  <option>6ème A</option><option>6ème B</option><option>5ème A</option>
+                </select>
+                <textarea style="width:100%;background:var(--bg4);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;color:var(--text);font-size:13px;resize:vertical;min-height:80px;outline:none;font-family:inherit" placeholder="Rédigez votre message SMS..."></textarea>
+                <button class="btn btn-gold" style="width:100%;justify-content:center;margin-top:8px" onclick="showToast('✅','SMS envoyé à 153 familles')">Envoyer via SMS · MTN/Moov</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PERSONNEL ── -->
+      <div class="view" id="view-personnel">
+        <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div>
+            <div class="page-title">Gestion du <span>Personnel</span></div>
+            <div class="page-subtitle">8 enseignants · 3 personnels administratifs</div>
+          </div>
+          <button class="btn btn-gold" onclick="showToast('✅','Fiche personnel créée')">+ Nouveau personnel</button>
+        </div>
+        <div class="grid grid-3" id="personnel-grid"></div>
+      </div>
+
+      <!-- ── PARAMÈTRES ── -->
+      <div class="view" id="view-parametres">
+        <div class="page-header">
+          <div class="page-title">Paramètres de <span>l'Établissement</span></div>
+          <div class="page-subtitle">Configuration générale · Année scolaire · Modules actifs</div>
+        </div>
+        <div class="grid grid-2">
+          <div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="param-section-title">Informations de l'établissement</div>
+              <div class="form-group">
+                <label class="form-label">Nom de l'établissement</label>
+                <input class="form-input" value="Complexe Scolaire La Fontaine">
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Ville</label>
+                  <input class="form-input" value="Cotonou">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Arrondissement</label>
+                  <input class="form-input" value="Akpakpa">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Téléphone WhatsApp Business</label>
+                <input class="form-input" value="+229 97 00 00 00">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Numéro d'agrément MEMP</label>
+                <input class="form-input" value="BEN/MEMP/2019/0412">
+              </div>
+              <button class="btn btn-gold" onclick="showToast('✅','Informations sauvegardées')">Enregistrer les modifications</button>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="param-section-title">Modules actifs</div>
+              <div class="param-row">
+                <div><div class="param-label">Gestion pédagogique</div><div class="param-desc">Notes, bulletins, emplois du temps</div></div>
+                <span class="badge green">Actif</span>
+              </div>
+              <div class="param-row">
+                <div><div class="param-label">Finance & Mobile Money</div><div class="param-desc">FedaPay · MTN · Moov · Cash</div></div>
+                <span class="badge green">Actif</span>
+              </div>
+              <div class="param-row">
+                <div><div class="param-label">Communication parents</div><div class="param-desc">SMS · WhatsApp Business API</div></div>
+                <span class="badge green">Actif</span>
+              </div>
+              <div class="param-row">
+                <div><div class="param-label">Portail parent (app mobile)</div><div class="param-desc">iOS & Android</div></div>
+                <span class="badge amber">Bêta</span>
+              </div>
+              <div class="param-row">
+                <div><div class="param-label">Rapports MEMP automatiques</div><div class="param-desc">Statistiques officielles</div></div>
+                <span class="badge gray">Bientôt</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="param-section-title">Intégrations paiement</div>
+              <div class="param-row">
+                <div><div class="param-label">FedaPay API</div><div class="param-desc">MTN MoMo · Moov Money · Orange</div></div>
+                <span class="badge green">Connecté</span>
+              </div>
+              <div class="param-row">
+                <div><div class="param-label">WhatsApp Business API</div><div class="param-desc">Via Twilio · 500 SMS/mois inclus</div></div>
+                <span class="badge green">Connecté</span>
+              </div>
+              <div class="param-row">
+                <div><div class="param-label">Google Analytics 4</div><div class="param-desc">Suivi comportement portail</div></div>
+                <span class="badge gray">Non configuré</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ══════════════════ MODALS ══════════════════ -->
+
+<!-- Add Élève Modal -->
+<div class="modal-overlay" id="modal-add-eleve">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Inscrire un nouvel élève</div>
+        <div class="modal-subtitle">Dossier d'inscription · Année 2025-2026</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-add-eleve')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Prénom(s)</label>
+          <input class="form-input" placeholder="Ex : Fatima" id="new-prenom">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nom de famille</label>
+          <input class="form-input" placeholder="Ex : Abiodun" id="new-nom">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Classe</label>
+          <select class="form-input" id="new-classe">
+            <option>6ème A</option><option>6ème B</option><option>5ème A</option>
+            <option>4ème A</option><option>3ème A</option><option>3ème B</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date de naissance</label>
+          <input class="form-input" type="date" id="new-dob">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nom du tuteur / parent</label>
+        <input class="form-input" placeholder="Ex : M. Abiodun Emmanuel" id="new-tuteur">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Téléphone (WhatsApp)</label>
+          <input class="form-input" placeholder="+229 97 XX XX XX" id="new-tel">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mode de paiement préféré</label>
+          <select class="form-input">
+            <option>MTN Mobile Money</option>
+            <option>Moov Money</option>
+            <option>Espèces</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-eleve')">Annuler</button>
+      <button class="btn btn-gold" onclick="addEleve()">Inscrire l'élève ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Payment Modal -->
+<div class="modal-overlay" id="modal-add-payment">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Enregistrer un paiement</div>
+        <div class="modal-subtitle">Frais scolaires · Trimestre 2 · 2026</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-add-payment')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Élève</label>
+        <select class="form-input">
+          <option>Abiodun Fatima — 6ème A</option>
+          <option>Assogba Marc — 6ème A</option>
+          <option>Gbèdo Kokou — 5ème A</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Montant (FCFA)</label>
+          <input class="form-input" type="number" placeholder="35 000" id="pay-amount">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mode de paiement</label>
+          <select class="form-input" id="pay-mode">
+            <option>MTN Mobile Money</option>
+            <option>Moov Money</option>
+            <option>Espèces</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Référence de transaction (optionnel)</label>
+        <input class="form-input" placeholder="Ex : TXN-MTN-20260309-XXXX" id="pay-ref">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-payment')">Annuler</button>
+      <button class="btn btn-gold" onclick="addPayment()">Valider le paiement ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Message Modal -->
+<div class="modal-overlay" id="modal-new-message">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Nouveau message</div>
+        <div class="modal-subtitle">Messagerie interne ÉduGest</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-new-message')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Destinataire</label>
+        <select class="form-input">
+          <option>Tous les parents</option>
+          <option>M. Adégboyé Emmanuel (Parent · Abiodun Fatima)</option>
+          <option>Mme Tokpo Félicité (Enseignante · Français)</option>
+          <option>Classe 6ème A — tous les parents</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Objet</label>
+        <input class="form-input" placeholder="Ex : Convocation réunion parents — 15 mars 2026">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message</label>
+        <textarea style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px;color:var(--text);font-size:13px;resize:vertical;min-height:120px;outline:none;font-family:inherit" placeholder="Votre message..."></textarea>
+      </div>
+      <div style="display:flex;gap:8px">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox" checked> Envoyer aussi via WhatsApp</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox"> Envoyer aussi via SMS</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-new-message')">Annuler</button>
+      <button class="btn btn-gold" onclick="sendMsg()">Envoyer le message ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast">
+  <span class="toast-icon" id="toast-icon"></span>
+  <span class="toast-text" id="toast-text"></span>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════════
+const CLASSES = ['6ème A','6ème B','5ème A','4ème A','3ème A','3ème B'];
+const MATIERES = ['Mathématiques','Français','Sciences','Histoire-Géo','Anglais','SVT','EPS'];
+const COEFFS   = [4,4,3,2,3,2,1];
+
+const NOMS_PRENOMS = [
+  ['Abiodun','Fatima'],['Assogba','Marc'],['Gbèdo','Kokou'],['Sohouénou','Grâce'],['Zinsou','Armelle'],
+  ['Kpadonou','Joël'],['Ahomadégbé','Christelle'],['Dossou','Rodrigue'],['Houégban','Séraphin'],
+  ['Kindé','Laure'],['Loko','Achille'],['Métonnou','Florence'],['Noudégbèss','Thierry'],
+  ['Odoulami','Rosine'],['Padonou','Abdoulaye'],['Quenum','Yves'],['Sagbo','Marguerite'],
+  ['Tchakpélou','Simon'],['Tossou','Nadège'],['Vodounnon','Éric'],['Whannou','Adèle'],
+  ['Yèmadjè','Patrick'],['Zinzindohoué','Cynthia'],['Agbodji','Hervé'],['Balogoun','Stéphanie'],
+  ['Capo-Chichi','Justin'],['Dahou','Nadia'],['Fandohan','Olivier'],['Gnonlonfoun','Isabelle'],
+  ['Hounzangbé','François']
+];
+
+const TUTEURS_SUFFIX = ['Emmanuel','Marie-Thérèse','Jean-Baptiste','Yvonne','Séverin','Adélaïde','Victorin','Justine'];
+
+let students = [];
+let payments = [];
+let presenceState = {};
+let currentPresenceClass = '6ème A';
+let currentPedaClass = '6ème A';
+let currentPedaMatiere = 'Mathématiques';
+let noteData = {};
+let chartsInitialized = false;
+
+function genMatricule(i){ return 'CS-'+(2025)+ '-' + String(i+1).padStart(3,'0'); }
+
+function initData(){
+  let id = 0;
+  CLASSES.forEach((cls, ci)=>{
+    const count = [28,26,25,24,27,23][ci];
+    for(let i=0;i<count;i++){
+      const [nom,prenom] = NOMS_PRENOMS[(id+i)%NOMS_PRENOMS.length];
+      const tuteur = 'M./Mme ' + nom + ' ' + TUTEURS_SUFFIX[(id+i)%TUTEURS_SUFFIX.length];
+      const statuses = ['payé','payé','payé','partiel','impayé'];
+      const st = statuses[Math.floor(Math.random()*statuses.length)];
+      const totalDu = 35000 * 3; // T1+T2+T3 simplified
+      const paye = st==='payé' ? totalDu : st==='partiel' ? Math.floor(totalDu * (0.4+Math.random()*0.4)) : 0;
+      const avg = +(8 + Math.random()*8).toFixed(2);
+      students.push({
+        id: id++, nom, prenom, classe:cls,
+        matricule: genMatricule(id-1),
+        tuteur,
+        tel: '+229 9'+Math.floor(1000000+Math.random()*8999999),
+        statut: st,
+        totalDu: 105000,
+        paye,
+        avg,
+        absences: Math.floor(Math.random()*8)
+      });
+    }
+  });
+
+  // Build payments from students
+  students.forEach(s=>{
+    const modes=['MTN Mobile Money','Moov Money','Espèces'];
+    const mode = modes[Math.floor(Math.random()*modes.length)];
+    const d = new Date(2026, 0 + Math.floor(Math.random()*2), 5 + Math.floor(Math.random()*22));
+    payments.push({
+      eleveId: s.id,
+      eleve: s.prenom+' '+s.nom,
+      classe: s.classe,
+      famille: s.tuteur,
+      totalDu: s.totalDu,
+      paye: s.paye,
+      mode,
+      date: d.toLocaleDateString('fr-FR'),
+      statut: s.statut
+    });
+  });
+
+  // Note data
+  CLASSES.forEach(cls=>{
+    noteData[cls] = {};
+    MATIERES.forEach(mat=>{
+      noteData[cls][mat] = {};
+      students.filter(s=>s.classe===cls).forEach(s=>{
+        noteData[cls][mat][s.id] = +(6 + Math.random()*13).toFixed(1);
+      });
+    });
+  });
+
+  // Presence
+  CLASSES.forEach(cls=>{
+    presenceState[cls] = {};
+    students.filter(s=>s.classe===cls).forEach(s=>{
+      presenceState[cls][s.id] = Math.random() > 0.05; // 95% present
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  LOGIN
+// ═══════════════════════════════════════════════════════
+function doLogin(){
+  const email = document.getElementById('login-email').value;
+  const pass = document.getElementById('login-pass').value;
+  if(!email||!pass){ showToast('⚠️','Veuillez remplir tous les champs'); return; }
+  const btn = document.querySelector('.btn-primary');
+  btn.textContent='Authentification...';
+  btn.style.opacity='0.7';
+  setTimeout(()=>{
+    document.getElementById('login-screen').style.opacity='0';
+    document.getElementById('login-screen').style.transition='opacity 0.5s';
+    setTimeout(()=>{
+      document.getElementById('login-screen').style.display='none';
+      document.getElementById('app').classList.add('visible');
+      initDashboard();
+      showToast('🎉','Bienvenue, Directeur Adégboyé');
+    },400);
+  },800);
+}
+
+// ═══════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════
+const VIEWS = {
+  dashboard:'Tableau de Bord', eleves:'Élèves', pedagogie:'Pédagogie',
+  presences:'Présences', finance:'Finance', communication:'Communication',
+  personnel:'Personnel', parametres:'Paramètres'
+};
+
+function navigate(view){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  document.querySelector(`[onclick="navigate('${view}')"]`).classList.add('active');
+  document.getElementById('breadcrumb').textContent = VIEWS[view];
+
+  if(view==='eleves') renderEleves();
+  if(view==='presences') renderPresences();
+  if(view==='finance') renderPayments(payments);
+  if(view==='communication') renderMessages();
+  if(view==='personnel') renderPersonnel();
+  if(view==='pedagogie'){ renderNotes(); }
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOPBAR DATE
+// ═══════════════════════════════════════════════════════
+function initDate(){
+  const now = new Date(2026,2,9);
+  const opts = {weekday:'long',year:'numeric',month:'long',day:'numeric'};
+  document.getElementById('topbar-date').textContent =
+    now.toLocaleDateString('fr-FR',opts);
+}
+
+// ═══════════════════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════════════════
+function initDashboard(){
+  renderPresenceStats();
+  renderRecentActivity();
+  setTimeout(initCharts, 100);
+}
+
+function renderPresenceStats(){
+  const data = [
+    ['6ème A', 96], ['6ème B', 94], ['5ème A', 97],
+    ['4ème A', 93], ['3ème A', 92], ['3ème B', 95]
+  ];
+  const el = document.getElementById('presence-stats');
+  el.innerHTML = data.map(([cls,pct])=>`
+    <div class="stat-row">
+      <div class="stat-row-label">${cls}</div>
+      <div class="stat-row-bar">
+        <div class="progress-wrap">
+          <div class="progress-bar" style="width:${pct}%;background:${pct>=95?'var(--green)':pct>=90?'var(--amber)':'var(--red)'}"></div>
+        </div>
+      </div>
+      <div class="stat-row-val">${pct}%</div>
+    </div>
+  `).join('');
+}
+
+function renderRecentActivity(){
+  const items = [
+    {icon:'💰',text:'Paiement MTN reçu — Assogba Marc',time:'14:32',color:'var(--green)'},
+    {icon:'📱',text:'Message parent — Zinsou Armelle 3ème A',time:'13:10',color:'var(--gold)'},
+    {icon:'⚠️',text:'3ème absence — Gbèdo Kokou 5ème A',time:'11:55',color:'var(--red)'},
+    {icon:'📋',text:'Bulletin généré — 6ème A · T2',time:'10:22',color:'var(--text2)'},
+    {icon:'👤',text:'Nouvelle inscription — Houégban Séraphin',time:'09:04',color:'var(--text2)'},
+  ];
+  document.getElementById('recent-activity').innerHTML = items.map(a=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="width:34px;height:34px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">${a.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.text}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Aujourd'hui · ${a.time}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function initCharts(){
+  if(chartsInitialized) return;
+  chartsInitialized = true;
+  Chart.defaults.color = '#9896A4';
+  Chart.defaults.font.family = "'Syne', sans-serif";
+
+  // Recouvrement line
+  const ctx1 = document.getElementById('chart-recouvrement').getContext('2d');
+  new Chart(ctx1,{
+    type:'bar',
+    data:{
+      labels:['Oct','Nov','Déc','Jan','Fév','Mar'],
+      datasets:[
+        {
+          label:'Collecté (FCFA)',
+          data:[1850000,2100000,1950000,2300000,2100000,2295000],
+          backgroundColor:'rgba(201,168,76,0.7)',
+          borderColor:'var(--gold)',
+          borderWidth:2,
+          borderRadius:6,
+        },
+        {
+          label:'Objectif',
+          data:[2500000,2500000,2500000,2800000,2800000,2920000],
+          type:'line',
+          borderColor:'rgba(255,255,255,0.2)',
+          borderDash:[4,4],
+          pointRadius:0,
+          fill:false,
+          tension:0.3,
+        }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{font:{size:11}}},
+        y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{font:{size:11},callback:v=>(v/1000000).toFixed(1)+'M'}}
+      }
+    }
+  });
+
+  // Niveaux doughnut
+  const ctx2 = document.getElementById('chart-niveaux').getContext('2d');
+  new Chart(ctx2,{
+    type:'doughnut',
+    data:{
+      labels:['6ème','5ème','4ème','3ème'],
+      datasets:[{
+        data:[54,25,24,50],
+        backgroundColor:['rgba(201,168,76,0.8)','rgba(0,163,108,0.8)','rgba(232,148,58,0.8)','rgba(99,102,241,0.8)'],
+        borderColor:['var(--gold)','var(--green)','var(--amber)','#6366f1'],
+        borderWidth:2,
+        hoverOffset:6,
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      cutout:'70%',
+      plugins:{
+        legend:{position:'bottom',labels:{padding:12,font:{size:11}}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed} élèves`}}
+      }
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  ÉLÈVES
+// ═══════════════════════════════════════════════════════
+let currentElevesFilter = {search:'', classe:''};
+
+function renderEleves(filtered){
+  const list = filtered || students.filter(s=>{
+    const search = currentElevesFilter.search.toLowerCase();
+    const cls = currentElevesFilter.classe;
+    return (!search || (s.nom+s.prenom+s.matricule).toLowerCase().includes(search))
+      && (!cls || s.classe===cls);
+  });
+
+  const tbody = document.getElementById('eleves-tbody');
+  if(!list.length){
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">👥</div><p>Aucun élève trouvé</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.slice(0,40).map(s=>`
+    <tr onclick="showToast('👤','Dossier de ${s.prenom} ${s.nom} — Classe : ${s.classe}')">
+      <td>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="user-avatar av-${(s.id%8)+1}" style="width:30px;height:30px;font-size:11px">${s.prenom[0]}${s.nom[0]}</div>
+          <div>
+            <div style="font-weight:600;font-size:13px">${s.prenom} ${s.nom}</div>
+          </div>
+        </div>
+      </td>
+      <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${s.matricule}</span></td>
+      <td><span class="badge gray">${s.classe}</span></td>
+      <td style="font-size:12px;color:var(--text2)">${s.tuteur}</td>
+      <td style="font-size:12px;color:var(--text2);font-family:'DM Mono',monospace">${s.tel}</td>
+      <td><span class="badge ${s.statut==='payé'?'green':s.statut==='partiel'?'amber':'red'}">${s.statut}</span></td>
+      <td class="note-avg ${s.avg>=12?'high':s.avg>=8?'mid':'low'}">${s.avg}/20</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();showToast('📁','Dossier complet de ${s.prenom} ${s.nom}')">Voir</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterEleves(v){
+  currentElevesFilter.search = v;
+  renderEleves();
+}
+function filterElevesClasse(v){
+  currentElevesFilter.classe = v;
+  renderEleves();
+}
+
+function addEleve(){
+  const prenom = document.getElementById('new-prenom').value || 'Nouveau';
+  const nom = document.getElementById('new-nom').value || 'Élève';
+  const classe = document.getElementById('new-classe').value;
+  const tuteur = document.getElementById('new-tuteur').value || 'Tuteur';
+  const tel = document.getElementById('new-tel').value || '+229 00 00 00 00';
+  students.push({
+    id: students.length, nom, prenom, classe,
+    matricule: genMatricule(students.length),
+    tuteur, tel, statut:'impayé',
+    totalDu:105000, paye:0, avg:0, absences:0
+  });
+  document.getElementById('badge-eleves').textContent = students.length;
+  closeModal('modal-add-eleve');
+  showToast('✅',`${prenom} ${nom} inscrit(e) avec succès`);
+  renderEleves();
+}
+
+// ═══════════════════════════════════════════════════════
+//  PÉDAGOGIE
+// ═══════════════════════════════════════════════════════
+function switchPedaTab(tab, el){
+  document.querySelectorAll('#peda-tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['notes','bulletin','edt'].forEach(t=>{
+    const el2 = document.getElementById('peda-tab-'+t);
+    if(el2) el2.style.display = t===tab?'block':'none';
+  });
+  if(tab==='bulletin') renderBulletin();
+  if(tab==='edt') renderEDT();
+}
+
+function renderNotes(){
+  const cls = document.getElementById('peda-classe').value;
+  const mat = document.getElementById('peda-matiere').value;
+  currentPedaClass = cls;
+  currentPedaMatiere = mat;
+  document.getElementById('notes-card-title').textContent = `Notes — ${cls} · ${mat} · Composition T2`;
+
+  const classStudents = students.filter(s=>s.classe===cls);
+  if(!noteData[cls]) noteData[cls]={};
+  if(!noteData[cls][mat]) noteData[cls][mat]={};
+
+  const table = document.getElementById('note-table');
+  const avgAll = classStudents.map(s=>noteData[cls][mat][s.id]||0);
+  const classAvg = avgAll.length ? (avgAll.reduce((a,b)=>a+b,0)/avgAll.length).toFixed(2) : '—';
+  document.getElementById('notes-class-avg').textContent = `Moy. classe : ${classAvg}/20`;
+
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>Élève</th>
+        <th>Note /20</th>
+        <th>Rang</th>
+        <th>Mention</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${classStudents.map((s,i)=>{
+        const note = noteData[cls][mat][s.id] !== undefined ? noteData[cls][mat][s.id] : '';
+        const n = parseFloat(note);
+        const mention = n>=16?'TB':n>=14?'B':n>=12?'AB':n>=10?'P':n>=8?'Ins':'TF';
+        const mentionColor = n>=14?'var(--green)':n>=10?'var(--amber)':'var(--red)';
+        return `
+          <tr>
+            <td>${s.prenom} ${s.nom}</td>
+            <td>
+              <input class="note-input" type="number" min="0" max="20" step="0.25"
+                value="${note}" id="note-${s.id}"
+                oninput="updateNote(${s.id},'${cls}','${mat}',this.value)"
+                placeholder="—">
+            </td>
+            <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text3)">${i+1}</td>
+            <td style="font-size:11px;font-weight:700;color:${mentionColor}">${note!==''?mention:'—'}</td>
+          </tr>
+        `;
+      }).join('')}
+    </tbody>
+  `;
+}
+
+function updateNote(id, cls, mat, val){
+  if(!noteData[cls]) noteData[cls]={};
+  if(!noteData[cls][mat]) noteData[cls][mat]={};
+  noteData[cls][mat][id] = parseFloat(val);
+}
+
+function saveNotes(){
+  showToast('✅', `Notes ${currentPedaMatiere} — ${currentPedaClass} sauvegardées`);
+}
+
+function renderBulletin(){
+  const idx = parseInt(document.getElementById('bull-eleve').value)||0;
+  const cls = '6ème A';
+  const slist = students.filter(s=>s.classe===cls);
+  const s = slist[idx] || slist[0];
+  if(!s) return;
+
+  const rows = MATIERES.map((mat,i)=>{
+    const n = noteData[cls]?.[mat]?.[s.id] || (8+Math.random()*10).toFixed(1);
+    const coeff = COEFFS[i];
+    const pts = (parseFloat(n)*coeff).toFixed(1);
+    const mention = parseFloat(n)>=14?'Bien':parseFloat(n)>=12?'Assez Bien':parseFloat(n)>=10?'Passable':'Insuffisant';
+    return `<tr><td>${mat}</td><td>${coeff}</td><td>${n}</td><td>${pts}</td><td>${mention}</td></tr>`;
+  }).join('');
+
+  const totalCoeff = COEFFS.reduce((a,b)=>a+b,0);
+  const moy = (Object.values(noteData[cls]||{}).reduce((acc,mat)=>acc+parseFloat(mat[s.id]||10),0)/MATIERES.length).toFixed(2);
+  const mention = parseFloat(moy)>=14?'BIEN':parseFloat(moy)>=12?'ASSEZ BIEN':parseFloat(moy)>=10?'PASSABLE':'INSUFFISANT';
+
+  document.getElementById('bulletin-preview-wrap').innerHTML = `
+    <div class="bulletin-preview">
+      <div class="bulletin-header">
+        <div class="bulletin-school-name">Complexe Scolaire La Fontaine</div>
+        <div>Cotonou, Bénin · Agréé MEMP · N° BEN/MEMP/2019/0412</div>
+        <div class="bulletin-title">BULLETIN DE NOTES — TRIMESTRE 2 · Année 2025-2026</div>
+      </div>
+      <div class="bulletin-info">
+        <div><b>Nom & Prénom :</b> ${s.nom} ${s.prenom}</div>
+        <div><b>Classe :</b> ${s.classe}</div>
+        <div><b>Matricule :</b> ${s.matricule}</div>
+        <div><b>Absences :</b> ${s.absences} jour(s)</div>
+      </div>
+      <table class="bulletin-table">
+        <thead><tr><th>Matière</th><th>Coeff.</th><th>Note /20</th><th>Points</th><th>Mention</th></tr></thead>
+        <tbody>${rows}</tbody>
+        <tfoot><tr style="background:#f0f0f0;font-weight:700"><td colspan="2">MOYENNE GÉNÉRALE</td><td>${moy}/20</td><td colspan="2"></td></tr></tfoot>
+      </table>
+      <div class="bulletin-mention">MENTION : ${mention}</div>
+      <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:20px;font-size:11px">
+        <div><u>Appréciation du Directeur :</u><br><br>_______________________</div>
+        <div style="text-align:right"><u>Signature & Cachet :</u><br><br>_______________________</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderEDT(){
+  const jours = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi'];
+  const heures = ['07h30','08h30','09h30','10h30','11h30','14h00','15h00','16h00'];
+  const mats = ['Maths','Français','Sciences','H-Géo','Anglais','SVT','EPS','Maths'];
+  const colors = ['rgba(201,168,76,0.15)','rgba(0,163,108,0.12)','rgba(99,102,241,0.12)','rgba(232,148,58,0.12)','rgba(59,130,246,0.12)'];
+
+  let html = `<table style="border-collapse:collapse;min-width:600px;width:100%">
+    <thead><tr>
+      <th style="padding:8px 12px;text-align:left;font-size:11px;color:var(--text3);border-bottom:1px solid var(--border);width:70px">Heure</th>
+      ${jours.map(j=>`<th style="padding:8px 12px;text-align:center;font-size:11px;color:var(--text3);border-bottom:1px solid var(--border)">${j}</th>`).join('')}
+    </tr></thead>
+    <tbody>
+      ${heures.map((h,hi)=>`
+        <tr>
+          <td style="padding:8px 12px;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;border-bottom:1px solid var(--border)">${h}</td>
+          ${jours.map((j,ji)=>{
+            const mat = mats[(hi+ji*2)%MATIERES.length];
+            const col = colors[ji%colors.length];
+            if(hi===5 && j==='Mercredi') return `<td style="background:rgba(255,255,255,0.02);border-bottom:1px solid var(--border)"></td>`;
+            return `<td style="padding:6px;border-bottom:1px solid var(--border)">
+              <div style="background:${col};border-radius:6px;padding:6px 8px;text-align:center;font-size:11px;font-weight:600">${mat}</div>
+            </td>`;
+          }).join('')}
+        </tr>
+      `).join('')}
+    </tbody>
+  </table>`;
+  document.getElementById('edt-grid').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
+//  PRÉSENCES
+// ═══════════════════════════════════════════════════════
+function renderPresences(){
+  const cls = document.getElementById('presence-classe').value;
+  currentPresenceClass = cls;
+  const classStudents = students.filter(s=>s.classe===cls);
+  if(!presenceState[cls]) presenceState[cls]={};
+
+  const grid = document.getElementById('presence-grid');
+  grid.innerHTML = classStudents.map(s=>{
+    const present = presenceState[cls][s.id]!==false;
+    return `
+      <div class="presence-card ${present?'present':'absent'}" id="pc-${s.id}">
+        <div>
+          <div class="presence-name">${s.prenom} ${s.nom}</div>
+          <div class="presence-num">${s.matricule}</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" ${present?'checked':''} onchange="togglePresence(${s.id},'${cls}',this.checked)">
+          <div class="toggle-track"><div class="toggle-thumb"></div></div>
+        </label>
+      </div>
+    `;
+  }).join('');
+
+  updatePresenceCounter(cls);
+  renderAbsencesChroniques();
+}
+
+function togglePresence(id, cls, val){
+  presenceState[cls][id] = val;
+  const card = document.getElementById('pc-'+id);
+  if(card){
+    card.classList.toggle('present', val);
+    card.classList.toggle('absent', !val);
+  }
+  updatePresenceCounter(cls);
+}
+
+function updatePresenceCounter(cls){
+  const classStudents = students.filter(s=>s.classe===cls);
+  const presents = classStudents.filter(s=>presenceState[cls][s.id]!==false).length;
+  document.getElementById('presence-counter').textContent = `${presents}/${classStudents.length} présents`;
+}
+
+function validatePresence(){
+  const cls = currentPresenceClass;
+  const absent = students.filter(s=>s.classe===cls && presenceState[cls][s.id]===false);
+  showToast('✅',`Appel validé · ${absent.length} absent(s) notifié(s) via WhatsApp`);
+  document.getElementById('badge-presences').textContent = absent.length || '0';
+}
+
+function renderAbsencesChroniques(){
+  const chronic = students.filter(s=>s.absences>=4).slice(0,5);
+  const el = document.getElementById('absences-chroniques');
+  if(!chronic.length){ el.innerHTML = '<div class="empty-state"><div class="empty-icon">✅</div><p>Aucune absence chronique ce mois</p></div>'; return; }
+  el.innerHTML = `<table style="width:100%">
+    <thead><tr>
+      <th style="padding:8px 14px;text-align:left;font-size:11px;color:var(--text3);border-bottom:1px solid var(--border)">Élève</th>
+      <th style="padding:8px 14px;font-size:11px;color:var(--text3);border-bottom:1px solid var(--border)">Classe</th>
+      <th style="padding:8px 14px;font-size:11px;color:var(--text3);border-bottom:1px solid var(--border)">Absences</th>
+      <th style="padding:8px 14px;font-size:11px;color:var(--text3);border-bottom:1px solid var(--border)">Action</th>
+    </tr></thead>
+    <tbody>
+      ${chronic.map(s=>`
+        <tr>
+          <td style="padding:10px 14px;font-size:13px;font-weight:500">${s.prenom} ${s.nom}</td>
+          <td style="padding:10px 14px"><span class="badge gray">${s.classe}</span></td>
+          <td style="padding:10px 14px"><span class="badge ${s.absences>=6?'red':'amber'}">${s.absences} jours</span></td>
+          <td style="padding:10px 14px">
+            <button class="btn btn-ghost btn-sm" onclick="showToast('📱','Message WhatsApp envoyé au tuteur de ${s.prenom} ${s.nom}')">📱 Notifier</button>
+          </td>
+        </tr>
+      `).join('')}
+    </tbody>
+  </table>`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  FINANCE
+// ═══════════════════════════════════════════════════════
+let paymentFilter = {search:'', statut:''};
+
+function renderPayments(list){
+  const tbody = document.getElementById('payments-tbody');
+  if(!tbody) return;
+  tbody.innerHTML = list.slice(0,40).map(p=>{
+    const restant = p.totalDu - p.paye;
+    const pmIcon = p.mode.includes('MTN') ? '<span class="pm-icon pm-mtn">M</span>' :
+                   p.mode.includes('Moov') ? '<span class="pm-icon pm-moov">V</span>' :
+                   '<span class="pm-icon pm-cash">💵</span>';
+    return `
+      <tr onclick="showToast('💰','Paiement de ${p.eleve} · ${p.paye.toLocaleString()} FCFA')">
+        <td style="font-weight:600">${p.eleve}</td>
+        <td><span class="badge gray">${p.classe}</span></td>
+        <td style="font-size:12px;color:var(--text2)">${p.famille}</td>
+        <td class="amount-cell">${p.totalDu.toLocaleString()}</td>
+        <td class="amount-cell" style="color:var(--green)">${p.paye.toLocaleString()}</td>
+        <td class="amount-cell" style="color:${restant>0?'var(--red)':'var(--green)'}">${restant>0?restant.toLocaleString():'—'}</td>
+        <td><div class="payment-method">${pmIcon} <span style="font-size:11px;color:var(--text2)">${p.mode}</span></div></td>
+        <td style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">${p.date}</td>
+        <td><span class="badge ${p.statut==='payé'?'green':p.statut==='partiel'?'amber':'red'}">${p.statut}</span></td>
+        <td>
+          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();showToast('🧾','Reçu généré et envoyé')">🧾</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function filterPayments(v){
+  const filtered = payments.filter(p=>
+    p.eleve.toLowerCase().includes(v.toLowerCase()) ||
+    p.famille.toLowerCase().includes(v.toLowerCase())
+  );
+  renderPayments(filtered);
+}
+
+function filterPaymentStatus(v){
+  const filtered = v ? payments.filter(p=>p.statut===v) : payments;
+  renderPayments(filtered);
+}
+
+function addPayment(){
+  showToast('✅','Paiement enregistré · Reçu généré automatiquement');
+  closeModal('modal-add-payment');
+}
+
+// ═══════════════════════════════════════════════════════
+//  COMMUNICATION
+// ═══════════════════════════════════════════════════════
+const MESSAGES = [
+  {from:'M. Assogba Jean',role:'Parent · Marc Assogba 6A',preview:'Bonjour Directeur, je voudrais discuter des résultats de mon fils...',time:'14:22',unread:true,av:'av-4'},
+  {from:'Mme Zinsou Élise',role:'Parent · Armelle Zinsou 3A',preview:'Je ne pourrai pas venir à la réunion du 15 mars, puis-je...',time:'13:10',unread:true,av:'av-2'},
+  {from:'Mme Tokpo Félicité',role:'Enseignante · Français',preview:'Directeur, les corrections de la composition sont terminées...',time:'11:55',unread:true,av:'av-3'},
+  {from:'M. Kpadonou Sylvain',role:'Parent · Joël Kpadonou 5A',preview:'Mon fils m\'a parlé d\'un problème avec un autre élève...',time:'10:30',unread:true,av:'av-5'},
+  {from:'Mme Sohouénou Claire',role:'Parent · Grâce Sohouénou 6B',preview:'Merci pour les bulletins reçus sur WhatsApp, très pratique!',time:'09:15',unread:true,av:'av-7'},
+  {from:'M. Houédété Rodrigue',role:'Enseignant · Sciences',preview:'Les équipements du labo sont en bon état, mais...',time:'Hier',unread:false,av:'av-6'},
+  {from:'Mme Capo-Chichi Rosine',role:'Enseignante · Anglais',preview:'Planning des compositions du trimestre 3 est joint...',time:'Hier',unread:false,av:'av-1'},
+  {from:'Administration MEMP',role:'Ministère · Officiel',preview:'Rappel : déclaration des effectifs avant le 31 mars 2026...',time:'25/02',unread:false,av:'av-8'},
+];
+
+function renderMessages(){
+  const el = document.getElementById('msg-list');
+  if(!el) return;
+  el.innerHTML = MESSAGES.map(m=>`
+    <div class="msg-item ${m.unread?'unread':''}" onclick="showToast('📬','Conversation avec ${m.from}')">
+      <div class="msg-avatar-sm ${m.av}" style="color:white">${m.from.split(' ').map(w=>w[0]).slice(0,2).join('')}</div>
+      <div class="msg-content">
+        <div class="msg-from">${m.from} <span style="font-size:10px;font-weight:400;color:var(--text3)">· ${m.role}</span></div>
+        <div class="msg-preview">${m.preview}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+        <div class="msg-time">${m.time}</div>
+        ${m.unread?'<div class="unread-dot"></div>':''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function switchCommTab(tab, el){
+  document.querySelectorAll('#comm-tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const filtered = tab==='all' ? MESSAGES :
+    tab==='parents' ? MESSAGES.filter(m=>m.role.includes('Parent')) :
+    MESSAGES.filter(m=>m.role.includes('Enseignant'));
+  document.getElementById('msg-list').innerHTML = '';
+  renderMessages(); // simplified
+}
+
+function sendMsg(){
+  closeModal('modal-new-message');
+  showToast('📨','Message envoyé via WhatsApp & messagerie interne');
+}
+
+// ═══════════════════════════════════════════════════════
+//  PERSONNEL
+// ═══════════════════════════════════════════════════════
+const STAFF = [
+  {nom:'Adégboyé Emmanuel',role:'Directeur Général',subject:'Direction',av:'av-4',status:'Temps plein'},
+  {nom:'Tokpo Félicité',role:'Enseignante',subject:'Français · 6ème & 5ème',av:'av-2',status:'Temps plein'},
+  {nom:'Houédété Rodrigue',role:'Enseignant',subject:'Sciences · SVT',av:'av-6',status:'Temps plein'},
+  {nom:'Capo-Chichi Rosine',role:'Enseignante',subject:'Anglais · Toutes classes',av:'av-1',status:'Temps plein'},
+  {nom:'Ahouandjinou Victor',role:'Enseignant',subject:'Histoire-Géographie',av:'av-5',status:'Temps plein'},
+  {nom:'Gbèmavo Cédric',role:'Enseignant',subject:'EPS · Toutes classes',av:'av-3',status:'Mi-temps'},
+  {nom:'Loko Prisca',role:'Secrétaire',subject:'Administration',av:'av-7',status:'Temps plein'},
+  {nom:'Kossou Paul',role:'Comptable',subject:'Finance & Paiements',av:'av-8',status:'Temps plein'},
+  {nom:'Zannou Brigitte',role:'Enseignante',subject:'Mathématiques · 4ème & 3ème',av:'av-2',status:'Temps plein'},
+  {nom:'Akpovi Mathieu',role:'Enseignant',subject:'Mathématiques · 6ème & 5ème',av:'av-5',status:'Temps plein'},
+  {nom:'Sossou Irène',role:'Surveillante Générale',subject:'Discipline & Présences',av:'av-7',status:'Temps plein'},
+];
+
+function renderPersonnel(){
+  const el = document.getElementById('personnel-grid');
+  if(!el) return;
+  el.innerHTML = STAFF.map(p=>`
+    <div class="staff-card" onclick="showToast('👨‍🏫','Fiche de ${p.nom}')">
+      <div class="staff-avatar ${p.av}">${p.nom.split(' ').map(w=>w[0]).join('')}</div>
+      <div style="flex:1;min-width:0">
+        <div class="staff-name">${p.nom}</div>
+        <div class="staff-role">${p.role} · <span style="color:var(--text3)">${p.status}</span></div>
+        <div class="staff-subject">${p.subject}</div>
+      </div>
+      <span class="badge ${p.status==='Temps plein'?'green':'amber'}">${p.status==='Temps plein'?'CDI':'Vacataire'}</span>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  MODALS
+// ═══════════════════════════════════════════════════════
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id){
+  document.getElementById(id).classList.remove('open');
+}
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{
+    if(e.target===m) m.classList.remove('open');
+  });
+});
+
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+let toastTimer;
+function showToast(icon, text){
+  clearTimeout(toastTimer);
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-text').textContent = text;
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+initData();
+initDate();
+
+// Keyboard shortcut
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+});
+</script>
+</body>
+</html>
