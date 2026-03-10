@@ -124,7 +124,7 @@ a { text-decoration: none; color: inherit; }
 .sidebar-footer { margin-top: auto; padding: 16px; border-top: 1px solid var(--border); }
 .user-tile { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: var(--radius-sm); cursor: pointer; transition: var(--transition); }
 .user-tile:hover { background: var(--bg3); }
-.user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary-dim); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+.user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary-dim); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; text-transform: uppercase; }
 .user-info { min-width: 0; }
 .user-name { font-size: 13px; font-weight: 600; color: var(--text); }
 .user-role { font-size: 12px; color: var(--text3); }
@@ -368,16 +368,24 @@ tbody tr.clickable:hover { background: var(--bg2); }
       <div class="login-logo-mark">É</div>
       <div class="login-logo-text">Édu<span>Gest</span></div>
     </div>
-    <div class="login-headline">Bienvenue.</div>
-    <p class="login-sub">Système Opérationnel - Accès Restreint.</p>
+    <div class="login-headline">Authentification</div>
+    <p class="login-sub">Sélectionnez un profil pour tester le système RBAC.</p>
+    
     <div class="form-group">
-      <label class="form-label">Identifiant</label>
-      <input class="form-input" type="text" placeholder="direction@edugest.bj" id="login-email" value="direction@edugest.bj">
+      <label class="form-label">Profil de Test (RBAC)</label>
+      <select class="form-input" id="login-role" onchange="updateLoginForm()" style="border-color: var(--primary); font-weight: 600;">
+        <option value="Directeur">Directeur (Accès Total)</option>
+        <option value="Censeur">Censeur (Pédagogie)</option>
+        <option value="Comptable">Comptable (Finance)</option>
+        <option value="Secrétaire">Secrétaire (Accueil / Admin)</option>
+      </select>
     </div>
+
     <div class="form-group">
-      <label class="form-label">Mot de passe</label>
-      <input class="form-input" type="password" placeholder="••••••••" id="login-pass" value="demo2026">
+      <label class="form-label">Identifiant (Auto-rempli)</label>
+      <input class="form-input" type="text" id="login-email" value="direction@edugest.bj" disabled>
     </div>
+    
     <button class="btn-primary" onclick="doLogin()" id="btn-login">Connexion</button>
     <div style="text-align:center; margin-top: 24px; font-size: 11px; color: var(--text3);">
       Conçu pour le Ministère des Enseignements (MEMP)<br>Bénin, Afrique de l'Ouest
@@ -404,33 +412,33 @@ tbody tr.clickable:hover { background: var(--bg2); }
     
     <div class="sidebar-section">
       <div class="sidebar-section-label">Direction</div>
-      <div class="nav-item active" onclick="navigate('dashboard')"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span> Vue d'ensemble</div>
-      <div class="nav-item" onclick="navigate('eleves')"><span class="nav-icon"><i data-lucide="users"></i></span> Dossiers Élèves <span class="nav-badge primary" id="badge-eleves">0</span></div>
+      <div class="nav-item active" id="nav-dashboard" onclick="navigate('dashboard')"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span> Vue d'ensemble</div>
+      <div class="nav-item rbac-nav" id="nav-eleves" onclick="navigate('eleves')"><span class="nav-icon"><i data-lucide="users"></i></span> Dossiers Élèves <span class="nav-badge primary" id="badge-eleves">0</span></div>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Pédagogie & Scolarité</div>
-      <div class="nav-item" onclick="navigate('pedagogie')"><span class="nav-icon"><i data-lucide="file-text"></i></span> Notes & Bulletins</div>
-      <div class="nav-item" onclick="navigate('orientation')"><span class="nav-icon"><i data-lucide="compass"></i></span> Orientation IA</div>
-      <div class="nav-item" onclick="navigate('examens')"><span class="nav-icon"><i data-lucide="graduation-cap"></i></span> Examens & BEPC <span class="nav-badge green">Nouveau</span></div>
-      <div class="nav-item" onclick="navigate('presences')"><span class="nav-icon"><i data-lucide="clock"></i></span> Présences</div>
-      <div class="nav-item" onclick="navigate('planning')"><span class="nav-icon"><i data-lucide="calendar"></i></span> Emploi du temps</div>
+      <div class="nav-item rbac-nav" id="nav-pedagogie" onclick="navigate('pedagogie')"><span class="nav-icon"><i data-lucide="file-text"></i></span> Notes & Bulletins</div>
+      <div class="nav-item rbac-nav" id="nav-orientation" onclick="navigate('orientation')"><span class="nav-icon"><i data-lucide="compass"></i></span> Orientation IA</div>
+      <div class="nav-item rbac-nav" id="nav-examens" onclick="navigate('examens')"><span class="nav-icon"><i data-lucide="graduation-cap"></i></span> Examens & BEPC <span class="nav-badge green">Nouveau</span></div>
+      <div class="nav-item rbac-nav" id="nav-presences" onclick="navigate('presences')"><span class="nav-icon"><i data-lucide="clock"></i></span> Présences</div>
+      <div class="nav-item rbac-nav" id="nav-planning" onclick="navigate('planning')"><span class="nav-icon"><i data-lucide="calendar"></i></span> Emploi du temps</div>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Administration</div>
-      <div class="nav-item" onclick="navigate('finance')"><span class="nav-icon"><i data-lucide="credit-card"></i></span> Finance & FedaPay <span class="nav-badge" id="badge-impayes">0</span></div>
-      <div class="nav-item" onclick="navigate('communication')"><span class="nav-icon"><i data-lucide="mail"></i></span> Communication</div>
-      <div class="nav-item" onclick="navigate('rh')"><span class="nav-icon"><i data-lucide="briefcase"></i></span> Équipe & Paie</div>
-      <div class="nav-item" onclick="navigate('profils')"><span class="nav-icon"><i data-lucide="shield-check"></i></span> Profils & Accès</div>
+      <div class="nav-item rbac-nav" id="nav-finance" onclick="navigate('finance')"><span class="nav-icon"><i data-lucide="credit-card"></i></span> Finance & FedaPay <span class="nav-badge" id="badge-impayes">0</span></div>
+      <div class="nav-item rbac-nav" id="nav-communication" onclick="navigate('communication')"><span class="nav-icon"><i data-lucide="mail"></i></span> Communication</div>
+      <div class="nav-item rbac-nav" id="nav-rh" onclick="navigate('rh')"><span class="nav-icon"><i data-lucide="briefcase"></i></span> Équipe & Paie</div>
+      <div class="nav-item rbac-nav" id="nav-profils" onclick="navigate('profils')"><span class="nav-icon"><i data-lucide="shield-check"></i></span> Profils & Accès</div>
     </div>
 
     <div class="sidebar-footer">
       <div class="user-tile" onclick="doLogout()">
-        <div class="user-avatar">AD</div>
+        <div class="user-avatar" id="logged-user-avatar">AD</div>
         <div class="user-info">
-          <div class="user-name">Directeur</div>
-          <div class="user-role">Déconnexion</div>
+          <div class="user-name" id="logged-user-name">Directeur</div>
+          <div class="user-role" id="logged-user-role">Déconnexion</div>
         </div>
       </div>
     </div>
@@ -467,11 +475,12 @@ tbody tr.clickable:hover { background: var(--bg2); }
       <div class="view active" id="view-dashboard">
         <div class="page-header">
           <div>
-            <div class="page-title">Bonjour, <span>Directeur</span></div>
+            <div class="page-title">Bonjour, <span id="dash-user-name">Directeur</span></div>
             <div class="page-subtitle">Année scolaire 2025-2026 · Trimestre 2</div>
           </div>
-          <!-- Bouton Rapport MEMP -->
-          <button class="btn btn-ghost" onclick="showToast('<i data-lucide=\'file-bar-chart-2\'></i>', 'Rapport MEMP généré avec succès.')"><i data-lucide="download"></i> Rapport MEMP</button>
+          <div>
+            <button class="btn btn-ghost" onclick="showToast('<i data-lucide=\'file-bar-chart-2\'></i>', 'Rapport MEMP généré avec succès.')"><i data-lucide="download"></i> Rapport MEMP</button>
+          </div>
         </div>
 
         <div class="grid grid-4" style="margin-bottom: 24px;">
@@ -518,7 +527,7 @@ tbody tr.clickable:hover { background: var(--bg2); }
           </div>
           <div style="display:flex; gap:12px;">
             <button class="btn btn-ghost" onclick="showToast('<i data-lucide=\'download\'></i>', 'Export Excel en cours.')"><i data-lucide="download"></i> Export Excel</button>
-            <button class="btn btn-primary" onclick="openEleveModal()"><i data-lucide="plus"></i> Inscrire</button>
+            <button class="btn btn-primary rbac-btn" id="btn-add-eleve" onclick="openEleveModal()"><i data-lucide="plus"></i> Inscrire</button>
           </div>
         </div>
 
@@ -583,7 +592,9 @@ tbody tr.clickable:hover { background: var(--bg2); }
             <div class="page-title">Examens <span>Officiels</span></div>
             <div class="page-subtitle">Préparation et simulation CEP, BEPC, BAC.</div>
           </div>
-          <button class="btn btn-primary" onclick="showToast('<i data-lucide=\'trending-up\'></i>', 'Création d\'un nouvel examen blanc.')"><i data-lucide="plus"></i> Planifier Blanc</button>
+          <div>
+            <button class="btn btn-primary rbac-btn" id="btn-add-exam" onclick="checkAccess('add-exam') && showToast('<i data-lucide=\'trending-up\'></i>', 'Création d\'un nouvel examen blanc.')"><i data-lucide="plus"></i> Planifier Blanc</button>
+          </div>
         </div>
         
         <div class="grid grid-2">
@@ -644,7 +655,9 @@ tbody tr.clickable:hover { background: var(--bg2); }
             <div class="page-title">Appel & <span>Présences</span></div>
             <div class="page-subtitle">Saisie numérique de l'appel journalier.</div>
           </div>
-          <button class="btn btn-primary" onclick="showToast('<i data-lucide=\'check-circle\'></i>', 'Appel enregistré avec succès.')"><i data-lucide="save"></i> Enregistrer</button>
+          <div>
+            <button class="btn btn-primary rbac-btn" id="btn-save-presence" onclick="showToast('<i data-lucide=\'check-circle\'></i>', 'Appel enregistré avec succès.')"><i data-lucide="save"></i> Enregistrer</button>
+          </div>
         </div>
         
         <div class="card" style="margin-bottom: 20px;">
@@ -700,7 +713,9 @@ tbody tr.clickable:hover { background: var(--bg2); }
             <div class="page-title">Équipe & <span>Paie</span></div>
             <div class="page-subtitle">Gestion du corps professoral.</div>
           </div>
-          <button class="btn btn-primary" onclick="openRHModal()"><i data-lucide="plus"></i> Ajouter Prof.</button>
+          <div>
+            <button class="btn btn-primary rbac-btn" id="btn-add-rh" onclick="openRHModal()"><i data-lucide="plus"></i> Ajouter Prof.</button>
+          </div>
         </div>
         <div class="table-wrap">
           <table>
@@ -717,7 +732,9 @@ tbody tr.clickable:hover { background: var(--bg2); }
             <div class="page-title">Suivi <span>Financier</span></div>
             <div class="page-subtitle">Encaissements via FedaPay et Banque.</div>
           </div>
-          <button class="btn btn-primary" onclick="openPaymentModal()"><i data-lucide="plus"></i> Encaissement</button>
+          <div>
+            <button class="btn btn-primary rbac-btn" id="btn-add-payment" onclick="openPaymentModal()"><i data-lucide="plus"></i> Encaissement</button>
+          </div>
         </div>
 
         <div class="toolbar">
@@ -769,7 +786,7 @@ tbody tr.clickable:hover { background: var(--bg2); }
               <label class="form-label">Contenu du message</label>
               <textarea class="form-input" id="comm-msg" rows="4">Bonjour, nous vous prions de bien vouloir vous rapprocher de la Direction concernant le dossier de votre enfant. Cordialement, La Direction.</textarea>
             </div>
-            <button class="btn btn-primary" style="width: 100%" onclick="sendCampaign()"><i data-lucide="send"></i> Diffuser le message</button>
+            <button class="btn btn-primary rbac-btn" id="btn-send-comm" style="width: 100%" onclick="sendCampaign()"><i data-lucide="send"></i> Diffuser le message</button>
           </div>
           
           <div class="card">
@@ -793,7 +810,10 @@ tbody tr.clickable:hover { background: var(--bg2); }
             <div class="page-title">Profils & <span>Accès</span></div>
             <div class="page-subtitle">Gérez les comptes administratifs et leurs niveaux d'habilitation.</div>
           </div>
-          <button class="btn btn-primary" onclick="openProfilModal()"><i data-lucide="plus"></i> Nouvel Accès</button>
+          <div>
+            <!-- Bouton Wrappé dans une div pour corriger le problème de taille -->
+            <button class="btn btn-primary rbac-btn" id="btn-add-profil" onclick="openProfilModal()"><i data-lucide="plus"></i> Nouvel Accès</button>
+          </div>
         </div>
 
         <div class="grid grid-4" style="margin-bottom: 24px;">
@@ -832,7 +852,7 @@ tbody tr.clickable:hover { background: var(--bg2); }
 </div>
 
 <!-- ══════════════════ MODALS ══════════════════ -->
-
+<!-- (Le code des modales reste identique, mais les actions à l'intérieur sont sécurisées via JS) -->
 <!-- Modal Édition Cours (Planning) -->
 <div class="modal-overlay" id="modal-course">
   <div class="modal">
@@ -999,12 +1019,10 @@ tbody tr.clickable:hover { background: var(--bg2); }
       <input type="hidden" id="ori-eleve-id">
       
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
-        <!-- Colonne Graphique -->
         <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: flex; align-items: center; justify-content: center;">
           <canvas id="ori-chart" style="max-width: 100%; max-height: 220px;"></canvas>
         </div>
         
-        <!-- Colonne Analyse -->
         <div style="display: flex; flex-direction: column; gap: 12px;">
           <div style="background: var(--bg3); padding: 16px; border-radius: 8px;">
             <h4 id="ori-nom" style="font-size: 18px; margin-bottom: 8px;">Nom de l'élève</h4>
@@ -1152,27 +1170,87 @@ tbody tr.clickable:hover { background: var(--bg2); }
 <div id="toast"><span class="toast-icon" id="toast-icon"></span><span class="toast-text" id="toast-text"></span></div>
 
 <script>
-// ════════════════════ GESTION SÉCURISÉE DES ICÔNES ════════════════════
-// Fonction appelée manuellement pour générer les icônes sans boucle de mutation
+// ════════════════════ MOTEUR RBAC & SÉCURITÉ ════════════════════
+let currentUserRole = 'Directeur';
+
+// Matrice des autorisations
+const RBAC_MAP = {
+  'Directeur': {
+    nav: ['nav-eleves', 'nav-pedagogie', 'nav-orientation', 'nav-examens', 'nav-presences', 'nav-planning', 'nav-finance', 'nav-communication', 'nav-rh', 'nav-profils'],
+    actions: ['edit-eleve', 'edit-notes', 'edit-orientation', 'edit-payment', 'edit-rh', 'edit-profil', 'edit-course', 'add-exam', 'send-comm', 'save-presence']
+  },
+  'Censeur': {
+    nav: ['nav-eleves', 'nav-pedagogie', 'nav-orientation', 'nav-examens', 'nav-presences', 'nav-planning'],
+    actions: ['edit-notes', 'edit-orientation', 'edit-course', 'add-exam']
+  },
+  'Comptable': {
+    nav: ['nav-eleves', 'nav-finance', 'nav-communication'],
+    actions: ['edit-payment'] // Peut voir les élèves mais pas les modifier
+  },
+  'Secrétaire': {
+    nav: ['nav-eleves', 'nav-presences', 'nav-planning', 'nav-communication'],
+    actions: ['edit-eleve', 'send-comm', 'save-presence']
+  }
+};
+
+function checkAccess(actionCode) {
+  const allowed = RBAC_MAP[currentUserRole].actions.includes(actionCode);
+  if(!allowed) {
+    showToast('<i data-lucide="lock"></i>', 'Accès refusé. Privilèges insuffisants.');
+  }
+  return allowed;
+}
+
+function applyRBAC() {
+  // 1. Cacher tout ce qui est restreint
+  document.querySelectorAll('.rbac-nav').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.rbac-btn').forEach(el => el.style.display = 'none');
+
+  // 2. Afficher ce qui est autorisé
+  const rules = RBAC_MAP[currentUserRole];
+  if(rules) {
+    rules.nav.forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.style.display = 'flex';
+    });
+    // On mappe nos actions sur les IDs des boutons
+    const btnMap = {
+      'edit-eleve': 'btn-add-eleve', 'edit-payment': 'btn-add-payment',
+      'edit-rh': 'btn-add-rh', 'edit-profil': 'btn-add-profil',
+      'add-exam': 'btn-add-exam', 'send-comm': 'btn-send-comm', 'save-presence': 'btn-save-presence'
+    };
+    rules.actions.forEach(action => {
+      const btnId = btnMap[action];
+      if(btnId) {
+        const btn = document.getElementById(btnId);
+        if(btn) btn.style.display = 'inline-flex';
+      }
+    });
+  }
+
+  // 3. Mise à jour des infos utilisateurs
+  document.getElementById('dash-user-name').textContent = currentUserRole;
+  document.getElementById('logged-user-name').textContent = currentUserRole;
+  document.getElementById('logged-user-role').textContent = "Connecté";
+  document.getElementById('logged-user-avatar').textContent = currentUserRole.substring(0,2).toUpperCase();
+}
+
+
 function refreshIcons() {
   if (window.lucide) {
     lucide.createIcons();
   }
 }
-// Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', refreshIcons);
 
-
-// ════════════════════ FONCTIONS UX ════════════════════
 function toggleTheme() {
   const html = document.documentElement;
   const current = html.getAttribute('data-theme');
   const target = current === 'dark' ? 'light' : 'dark';
   html.setAttribute('data-theme', target);
   
-  // Remplacement dynamique de l'icône
   document.getElementById('btn-theme').innerHTML = target === 'dark' ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
-  refreshIcons(); // Application de la nouvelle icône
+  refreshIcons(); 
   
   if(oriChartInstance) {
     Chart.defaults.color = target === 'dark' ? '#CBD5E1' : '#475569';
@@ -1187,7 +1265,7 @@ function toggleSidebar() {
   overlay.classList.toggle('active');
 }
 
-// ════════════════════ MOTEUR DE DONNÉES STRUCTURÉES ════════════════════
+// ════════════════════ MOTEUR DE DONNÉES ════════════════════
 const MATIERES = [
   { nom: "Mathématiques", coef: 4, type: "Science" },
   { nom: "Physique-Chimie", coef: 4, type: "Science" },
@@ -1205,23 +1283,17 @@ let payments = [];
 let teachers = [
   {id: 1, nom: "M. Dossou Alain", matiere: "Mathématiques", tel: "+229 97001122", contrat: "Permanent", statut: "Actif"},
   {id: 2, nom: "Mme Abiodun Sara", matiere: "Physique-Chimie", tel: "+229 95003344", contrat: "Permanent", statut: "Actif"},
-  {id: 3, nom: "M. Zinsou Marc", matiere: "Français", tel: "+229 96005566", contrat: "Vacataire", statut: "Actif"},
-  {id: 4, nom: "Mme Grâce K.", matiere: "Anglais", tel: "+229 99001122", contrat: "Vacataire", statut: "Actif"},
-  {id: 5, nom: "M. Assogba P.", matiere: "S.V.T (Biologie)", tel: "+229 90000000", contrat: "Permanent", statut: "Actif"}
+  {id: 3, nom: "M. Zinsou Marc", matiere: "Français", tel: "+229 96005566", contrat: "Vacataire", statut: "Actif"}
 ];
 
 let schedules = [
   {id: 1, classe: "Terminale D", jour: "Lundi", creneau: "08h00 - 10h00", matiere: "Mathématiques", prof: "M. Dossou Alain", salle: "Salle 12"},
   {id: 2, classe: "Terminale D", jour: "Lundi", creneau: "10h15 - 12h00", matiere: "S.V.T (Biologie)", prof: "M. Assogba P.", salle: "Labo 1"},
-  {id: 3, classe: "Terminale D", jour: "Mardi", creneau: "08h00 - 10h00", matiere: "Physique-Chimie", prof: "Mme Abiodun Sara", salle: "Labo 2"},
-  {id: 4, classe: "Terminale D", jour: "Mardi", creneau: "10h15 - 12h00", matiere: "Histoire-Géo", prof: "M. Mensah H.", salle: "Salle 12"},
-  {id: 5, classe: "Terminale D", jour: "Mercredi", creneau: "08h00 - 10h00", matiere: "Français", prof: "M. Zinsou Marc", salle: "Salle 12"},
-  {id: 6, classe: "Terminale D", jour: "Jeudi", creneau: "08h00 - 10h00", matiere: "Anglais", prof: "Mme Grâce K.", salle: "Salle 14"},
-  {id: 7, classe: "Terminale D", jour: "Vendredi", creneau: "08h00 - 10h00", matiere: "Mathématiques", prof: "M. Dossou Alain", salle: "Salle 12"}
+  {id: 3, classe: "Terminale D", jour: "Mardi", creneau: "08h00 - 10h00", matiere: "Physique-Chimie", prof: "Mme Abiodun Sara", salle: "Labo 2"}
 ];
 
-const NOMS = ["Abiodun", "Assogba", "Gbèdo", "Sohouénou", "Zinsou", "Kpadonou", "Dossou", "Mensah", "Ahouansou", "Hountondji"];
-const PRENOMS = ["Fatima", "Marc", "Kokou", "Grâce", "Armelle", "Joël", "Roxane", "Éric", "Léon", "Aïcha"];
+const NOMS = ["Abiodun", "Assogba", "Gbèdo", "Sohouénou", "Zinsou", "Kpadonou", "Dossou", "Mensah"];
+const PRENOMS = ["Fatima", "Marc", "Kokou", "Grâce", "Armelle", "Joël", "Roxane", "Éric"];
 const METHODES = ["Virement Bancaire", "FedaPay (MTN/Moov)", "Espèces (Agent)"];
 
 const ROLES_PERMISSIONS = {
@@ -1263,11 +1335,11 @@ function analyzeProfile(bulletin) {
   if(svt > max) { best = 'SVT'; max = svt; }
 
   let rec = "Littéraire (AB)"; let reason = "";
-  if (math >= 14 && phys >= 13) { rec = "Scientifique (C)"; reason = "Excellentes aptitudes logico-mathématiques. Profil idéal pour la série C."; }
-  else if (svt >= 13 && (math >= 11 || phys >= 11)) { rec = "Scientifique (D)"; reason = "Bon profil scientifique avec une forte appétence pour les sciences de la vie."; }
-  else if (fran >= 13) { rec = "Littéraire (AB)"; reason = "Fortes capacités rédactionnelles et littéraires détectées."; }
-  else if (math >= 10 && fran >= 10) { rec = "Technique (G2)"; reason = "Profil équilibré, parfaitement adapté aux filières techniques."; }
-  else { rec = "Maintien actuel"; reason = "Fragilité globale constatée. Une consolidation des bases est recommandée."; }
+  if (math >= 14 && phys >= 13) { rec = "Scientifique (C)"; reason = "Excellentes aptitudes logico-mathématiques."; }
+  else if (svt >= 13 && (math >= 11 || phys >= 11)) { rec = "Scientifique (D)"; reason = "Bon profil scientifique."; }
+  else if (fran >= 13) { rec = "Littéraire (AB)"; reason = "Fortes capacités rédactionnelles."; }
+  else if (math >= 10 && fran >= 10) { rec = "Technique (G2)"; reason = "Profil équilibré."; }
+  else { rec = "Maintien actuel"; reason = "Fragilité globale constatée."; }
   return { best, rec, reason, math, phys, fran, svt }; 
 }
 
@@ -1322,15 +1394,26 @@ function initData() {
   }
 }
 
-// ════════════════════ NAVIGATION ════════════════════
+// ════════════════════ NAVIGATION & LOGIN ════════════════════
+function updateLoginForm() {
+  const r = document.getElementById('login-role').value;
+  const emails = { 'Directeur': 'direction@edugest.bj', 'Censeur': 'pedagogie@edugest.bj', 'Comptable': 'finance@edugest.bj', 'Secrétaire': 'accueil@edugest.bj' };
+  document.getElementById('login-email').value = emails[r];
+}
+
 function doLogin() {
   const btn = document.getElementById('btn-login');
   btn.textContent = 'Authentification...';
+  currentUserRole = document.getElementById('login-role').value; // Enregistre le rôle actif
+  
   setTimeout(() => {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').classList.add('visible');
+    
+    applyRBAC(); // Applique les restrictions visuelles
     runCalculations();
-    showToast('<i data-lucide="hand"></i>', 'Système ERP initialisé avec succès.');
+    navigate('dashboard');
+    showToast('<i data-lucide="hand"></i>', `Connecté en tant que ${currentUserRole}`);
   }, 600);
 }
 
@@ -1343,11 +1426,16 @@ function doLogout() {
 function navigate(view) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('view-' + view).classList.add('active');
-  event.currentTarget.classList.add('active');
+  
+  const viewEl = document.getElementById('view-' + view);
+  if (viewEl) viewEl.classList.add('active');
+  
+  const navEl = document.getElementById('nav-' + view);
+  if (navEl) navEl.classList.add('active');
   
   const t = { dashboard:"Vue d'ensemble", eleves:"Dossiers Élèves", pedagogie:"Notes & Bulletins", orientation:"Cellule Orientation IA", examens:"Examens & BEPC", finance:"Suivi Financier", communication:"Communication", presences:"Appel & Présences", planning:"Emplois du temps", rh:"Équipe & Paie", profils:"Profils & Accès" };
-  document.getElementById('breadcrumb').textContent = t[view];
+  document.getElementById('breadcrumb').textContent = t[view] || "";
+
   if(view === 'presences') renderPresences(); 
   if(view === 'rh') renderRH();
   if(view === 'planning') renderTimetable();
@@ -1385,7 +1473,7 @@ function runCalculations() {
   updateKPIs(); 
   renderProfils();
   
-  refreshIcons(); // Application globale des icônes après tous les rendus
+  refreshIcons();
 }
 
 // ════════════════════ VUES SÉPARÉES ════════════════════
@@ -1430,7 +1518,7 @@ function setElevesView(mode, tabElement) {
     grid.appendChild(card);
   });
   
-  refreshIcons(); // Appliquer les icônes sur les nouvelles cartes
+  refreshIcons();
 }
 
 function filterFromDirectory(mode, value) {
@@ -1508,43 +1596,6 @@ function renderTimetable() {
   grid.innerHTML = html;
   refreshIcons();
 }
-
-function openCourseModal(jour, creneau, courseId = null) {
-  document.getElementById('modal-course-title').textContent = courseId ? "Modifier le cours" : "Ajouter un cours";
-  document.getElementById('course-display-jour').textContent = jour; document.getElementById('course-display-creneau').textContent = creneau;
-  document.getElementById('course-jour').value = jour; document.getElementById('course-creneau').value = creneau;
-  document.getElementById('course-id').value = courseId || "";
-
-  document.getElementById('course-prof').innerHTML = teachers.map(t => `<option value="${t.nom}">${t.nom} (${t.matiere})</option>`).join('');
-  const delZone = document.getElementById('course-delete-zone');
-
-  if(courseId) {
-    const course = schedules.find(c => c.id === courseId);
-    document.getElementById('course-matiere').value = course.matiere; document.getElementById('course-prof').value = course.prof; document.getElementById('course-salle').value = course.salle;
-    delZone.innerHTML = `<button class="btn btn-danger" onclick="deleteCourse(${course.id})">Supprimer ce créneau</button>`;
-  } else {
-    document.getElementById('course-matiere').value = "Mathématiques"; document.getElementById('course-salle').value = ""; delZone.innerHTML = '';
-  }
-  document.getElementById('modal-course').classList.add('open');
-}
-
-function saveCourse() {
-  const idStr = document.getElementById('course-id').value; const cls = document.getElementById('planning-classe').value;
-  const jour = document.getElementById('course-jour').value; const creneau = document.getElementById('course-creneau').value;
-  const matiere = document.getElementById('course-matiere').value; const prof = document.getElementById('course-prof').value;
-  const salle = document.getElementById('course-salle').value || 'À définir';
-  if(!prof) return showToast('<i data-lucide="alert-triangle"></i>', 'Veuillez sélectionner un enseignant.');
-
-  if(idStr) {
-    const course = schedules.find(c => c.id === parseInt(idStr));
-    course.matiere = matiere; course.prof = prof; course.salle = salle; showToast('<i data-lucide="check-circle"></i>', `Créneau mis à jour.`);
-  } else {
-    schedules.push({ id: Date.now(), classe: cls, jour, creneau, matiere, prof, salle }); showToast('<i data-lucide="party-popper"></i>', `Nouveau cours ajouté au planning.`);
-  }
-  closeModal('modal-course'); renderTimetable();
-}
-
-function deleteCourse(id) { schedules = schedules.filter(c => c.id !== id); showToast('<i data-lucide="trash-2"></i>', 'Le créneau a été libéré.'); closeModal('modal-course'); renderTimetable(); }
 
 function renderDashboard() {
   const topEleves = [...students].sort((a,b) => b.moyenne - a.moyenne).slice(0, 5);
@@ -1693,14 +1744,10 @@ function renderProfils() {
   `}).join('');
 }
 
-// ════════════════════ ACTIONS MODALS ════════════════════
-document.getElementById('edit-niveau').addEventListener('change', function(e) {
-  const nv = e.target.value; const s = document.getElementById('edit-serie').value;
-  const suffix = s === 'Tronc Commun' ? 'A' : (s.match(/\(([^)]+)\)/)?.[1] || '');
-  document.getElementById('edit-classe').value = suffix ? `${nv} ${suffix}` : nv;
-});
+// ════════════════════ ACTIONS MODALS SÉCURISÉES PAR RBAC ════════════════════
 
 function openEleveModal(id = null) {
+  if(!checkAccess('edit-eleve')) return;
   const isEdit = id !== null; document.getElementById('modal-eleve-title').textContent = isEdit ? "Dossier Élève" : "Nouvelle Inscription";
   const delZone = document.getElementById('eleve-delete-zone');
   if(isEdit) {
@@ -1718,28 +1765,8 @@ function openEleveModal(id = null) {
   document.getElementById('modal-eleve').classList.add('open');
 }
 
-function saveEleve() {
-  const idStr = document.getElementById('edit-eleve-id').value;
-  const prenom = document.getElementById('edit-prenom').value; const nom = document.getElementById('edit-nom').value;
-  if(!prenom || !nom) return showToast('<i data-lucide="alert-triangle"></i>', 'Nom et prénom obligatoires');
-  const niveau = document.getElementById('edit-niveau').value; const serie = document.getElementById('edit-serie').value; const classe = document.getElementById('edit-classe').value;
-  const cycle = ['6ème', '5ème', '4ème', '3ème'].includes(niveau) ? '1er Cycle' : '2nd Cycle';
-  
-  if(idStr) {
-    const s = students.find(x => x.id === parseInt(idStr));
-    s.prenom = prenom; s.nom = nom; s.cycle = cycle; s.niveau = niveau; s.serie = serie; s.classe = classe; s.tuteur = document.getElementById('edit-tuteur').value; s.tel = document.getElementById('edit-tel').value;
-    showToast('<i data-lucide="check-circle"></i>', `Dossier mis à jour.`);
-  } else {
-    let newBulletin = MATIERES.map(m => ({ matiere: m.nom, coef: m.coef, type: m.type, interro: 10, devoir: 10, moyenne: 10 }));
-    students.push({ id: students.length + 1, prenom, nom, cycle, niveau, serie, classe, matricule: document.getElementById('edit-matricule').value, tuteur: document.getElementById('edit-tuteur').value, tel: document.getElementById('edit-tel').value, totalDu: cycle === '1er Cycle' ? 95000 : 135000, paye: 0, statut: 'Impayé total', bulletin: newBulletin, moyenne: 10, absences: 0, risque: 'Faible', aptitude: 'À déterminer' });
-    showToast('<i data-lucide="party-popper"></i>', `Nouvel élève inscrit.`);
-  }
-  closeModal('modal-eleve'); runCalculations();
-}
-
-function deleteEleve(id) { students = students.filter(s => s.id !== id); showToast('<i data-lucide="trash-2"></i>', 'Dossier élève supprimé.'); closeModal('modal-eleve'); runCalculations(); }
-
 function openNotesModal(id) {
+  if(!checkAccess('edit-notes')) return;
   const s = students.find(x => x.id === id);
   document.getElementById('note-eleve-id').value = s.id; 
   document.getElementById('note-nom').textContent = `${s.prenom} ${s.nom}`; 
@@ -1762,6 +1789,213 @@ function openNotesModal(id) {
 
   updateModalTotals(s.bulletin);
   document.getElementById('modal-notes').classList.add('open');
+}
+
+function openOrientationModal(id) {
+  if(!checkAccess('edit-orientation')) return;
+  const s = students.find(x => x.id === id);
+  document.getElementById('ori-eleve-id').value = s.id; document.getElementById('ori-nom').textContent = `${s.prenom} ${s.nom} (${s.classe})`;
+  document.getElementById('ori-moy').textContent = `${s.moyenne.toFixed(2)}/20`; document.getElementById('ori-apt').textContent = s.aptitude;
+  document.getElementById('ori-reason').textContent = s.recoReason; document.getElementById('ori-serie').value = s.recoSerie;
+  
+  const ctx = document.getElementById('ori-chart').getContext('2d');
+  if(oriChartInstance) oriChartInstance.destroy();
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  Chart.defaults.color = isDark ? '#CBD5E1' : '#475569';
+  const prof = analyzeProfile(s.bulletin);
+
+  oriChartInstance = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['Maths', 'Physique', 'SVT', 'Français'],
+      datasets: [{ label: 'Profil Élève', data: [prof.math, prof.phys, prof.svt, prof.fran], backgroundColor: 'rgba(124, 58, 237, 0.2)', borderColor: '#7C3AED', pointBackgroundColor: '#7C3AED', pointBorderColor: '#fff', borderWidth: 2 }]
+    },
+    options: { scales: { r: { min: 0, max: 20, ticks: { stepSize: 5, display: false } } }, plugins: { legend: { display: false } }, maintainAspectRatio: false }
+  });
+  document.getElementById('modal-orientation').classList.add('open');
+}
+
+function openPaymentModal(paymentId = null) {
+  if(!checkAccess('edit-payment')) return;
+  document.getElementById('modal-payment-title').textContent = paymentId !== null ? "Détails Encaissement" : "Saisir Encaissement";
+  const sel = document.getElementById('pay-eleve'); sel.innerHTML = students.map(s => `<option value="${s.id}">${s.prenom} ${s.nom} - Reste: ${s.totalDu - s.paye}F</option>`).join('');
+  const actionsZone = document.getElementById('payment-actions-zone');
+  if(paymentId !== null) {
+    const p = payments.find(x => x.id === paymentId); document.getElementById('edit-payment-index').value = p.id;
+    sel.value = p.eleveId; document.getElementById('pay-amount').value = p.montant; document.getElementById('pay-method').value = p.methode; document.getElementById('pay-date').value = p.date;
+    actionsZone.innerHTML = `<button class="btn btn-ghost" onclick="printReceipt()"><i data-lucide="printer"></i> Reçu</button> <button class="btn btn-danger" onclick="deletePayment(${p.id})">Annuler</button>`;
+  } else {
+    document.getElementById('edit-payment-index').value = ""; document.getElementById('pay-amount').value = ""; document.getElementById('pay-method').value = "FedaPay (MTN/Moov)"; document.getElementById('pay-date').value = new Date().toISOString().split('T')[0];
+    actionsZone.innerHTML = '';
+  }
+  document.getElementById('modal-payment').classList.add('open');
+  refreshIcons();
+}
+
+function openCourseModal(jour, creneau, courseId = null) {
+  if(!checkAccess('edit-course')) return;
+  document.getElementById('modal-course-title').textContent = courseId ? "Modifier le cours" : "Ajouter un cours";
+  document.getElementById('course-display-jour').textContent = jour; document.getElementById('course-display-creneau').textContent = creneau;
+  document.getElementById('course-jour').value = jour; document.getElementById('course-creneau').value = creneau;
+  document.getElementById('course-id').value = courseId || "";
+
+  document.getElementById('course-prof').innerHTML = teachers.map(t => `<option value="${t.nom}">${t.nom} (${t.matiere})</option>`).join('');
+  const delZone = document.getElementById('course-delete-zone');
+
+  if(courseId) {
+    const course = schedules.find(c => c.id === courseId);
+    document.getElementById('course-matiere').value = course.matiere; document.getElementById('course-prof').value = course.prof; document.getElementById('course-salle').value = course.salle;
+    delZone.innerHTML = `<button class="btn btn-danger" onclick="deleteCourse(${course.id})">Supprimer ce créneau</button>`;
+  } else {
+    document.getElementById('course-matiere').value = "Mathématiques"; document.getElementById('course-salle').value = ""; delZone.innerHTML = '';
+  }
+  document.getElementById('modal-course').classList.add('open');
+}
+
+function openRHModal(id = null) {
+  if(!checkAccess('edit-rh')) return;
+  document.getElementById('modal-rh-title').textContent = id !== null ? "Fiche Enseignant" : "Nouveau Recrutement";
+  const delZone = document.getElementById('rh-delete-zone');
+  if(id !== null) {
+    const t = teachers.find(x => x.id === id); document.getElementById('edit-rh-id').value = t.id;
+    document.getElementById('rh-nom').value = t.nom; document.getElementById('rh-matiere').value = t.matiere; document.getElementById('rh-tel').value = t.tel;
+    delZone.innerHTML = `<button class="btn btn-danger" onclick="deleteRH(${t.id})">Renvoyer</button>`;
+  } else {
+    document.getElementById('edit-rh-id').value = ""; document.getElementById('rh-nom').value = ""; document.getElementById('rh-tel').value = ""; delZone.innerHTML = '';
+  }
+  document.getElementById('modal-rh').classList.add('open');
+}
+
+function openProfilModal(id = null) {
+  if(!checkAccess('edit-profil')) return;
+  document.getElementById('modal-profil-title').textContent = id !== null ? "Modifier l'Accès" : "Nouvel Accès";
+  const delZone = document.getElementById('profil-delete-zone');
+  if(id !== null) {
+    const a = admins.find(x => x.id === id); document.getElementById('edit-profil-id').value = a.id;
+    document.getElementById('profil-nom').value = a.nom; document.getElementById('profil-email').value = a.email; document.getElementById('profil-role').value = a.role;
+    delZone.innerHTML = `<button class="btn btn-danger" onclick="deleteProfil(${a.id})">Révoquer l'accès</button>`;
+  } else {
+    document.getElementById('edit-profil-id').value = ""; document.getElementById('profil-nom').value = ""; document.getElementById('profil-email').value = ""; 
+    document.getElementById('profil-role').value = "Secrétaire"; delZone.innerHTML = '';
+  }
+  updatePermissionsList();
+  document.getElementById('modal-profil').classList.add('open');
+}
+
+// ════════════════════ FONCTIONS DE SAUVEGARDE ════════════════════
+function saveCourse() {
+  const idStr = document.getElementById('course-id').value; const cls = document.getElementById('planning-classe').value;
+  const jour = document.getElementById('course-jour').value; const creneau = document.getElementById('course-creneau').value;
+  const matiere = document.getElementById('course-matiere').value; const prof = document.getElementById('course-prof').value;
+  const salle = document.getElementById('course-salle').value || 'À définir';
+  if(!prof) return showToast('<i data-lucide="alert-triangle"></i>', 'Veuillez sélectionner un enseignant.');
+
+  if(idStr) {
+    const course = schedules.find(c => c.id === parseInt(idStr));
+    course.matiere = matiere; course.prof = prof; course.salle = salle; showToast('<i data-lucide="check-circle"></i>', `Créneau mis à jour.`);
+  } else {
+    schedules.push({ id: Date.now(), classe: cls, jour, creneau, matiere, prof, salle }); showToast('<i data-lucide="party-popper"></i>', `Nouveau cours ajouté au planning.`);
+  }
+  closeModal('modal-course'); renderTimetable();
+}
+
+function deleteCourse(id) { schedules = schedules.filter(c => c.id !== id); showToast('<i data-lucide="trash-2"></i>', 'Le créneau a été libéré.'); closeModal('modal-course'); renderTimetable(); }
+
+function saveEleve() {
+  const idStr = document.getElementById('edit-eleve-id').value;
+  const prenom = document.getElementById('edit-prenom').value; const nom = document.getElementById('edit-nom').value;
+  if(!prenom || !nom) return showToast('<i data-lucide="alert-triangle"></i>', 'Nom et prénom obligatoires');
+  const niveau = document.getElementById('edit-niveau').value; const serie = document.getElementById('edit-serie').value; const classe = document.getElementById('edit-classe').value;
+  const cycle = ['6ème', '5ème', '4ème', '3ème'].includes(niveau) ? '1er Cycle' : '2nd Cycle';
+  
+  if(idStr) {
+    const s = students.find(x => x.id === parseInt(idStr));
+    s.prenom = prenom; s.nom = nom; s.cycle = cycle; s.niveau = niveau; s.serie = serie; s.classe = classe; s.tuteur = document.getElementById('edit-tuteur').value; s.tel = document.getElementById('edit-tel').value;
+    showToast('<i data-lucide="check-circle"></i>', `Dossier mis à jour.`);
+  } else {
+    let newBulletin = MATIERES.map(m => ({ matiere: m.nom, coef: m.coef, type: m.type, interro: 10, devoir: 10, moyenne: 10 }));
+    students.push({ id: students.length + 1, prenom, nom, cycle, niveau, serie, classe, matricule: document.getElementById('edit-matricule').value, tuteur: document.getElementById('edit-tuteur').value, tel: document.getElementById('edit-tel').value, totalDu: cycle === '1er Cycle' ? 95000 : 135000, paye: 0, statut: 'Impayé total', bulletin: newBulletin, moyenne: 10, absences: 0, risque: 'Faible', aptitude: 'À déterminer' });
+    showToast('<i data-lucide="party-popper"></i>', `Nouvel élève inscrit.`);
+  }
+  closeModal('modal-eleve'); runCalculations();
+}
+
+function deleteEleve(id) { students = students.filter(s => s.id !== id); showToast('<i data-lucide="trash-2"></i>', 'Dossier élève supprimé.'); closeModal('modal-eleve'); runCalculations(); }
+
+function saveNotes() {
+  const id = parseInt(document.getElementById('note-eleve-id').value); const s = students.find(x => x.id === id);
+  s.bulletin.forEach((b, index) => {
+    b.interro = parseFloat(document.getElementById(`inp-int-${index}`).value) || 0;
+    b.devoir = parseFloat(document.getElementById(`inp-dev-${index}`).value) || 0;
+  });
+  showToast('<i data-lucide="edit-3"></i>', `Bulletin de ${s.prenom} mis à jour.`); 
+  closeModal('modal-notes'); runCalculations();
+}
+
+function saveOrientation() {
+  const id = parseInt(document.getElementById('ori-eleve-id').value); const ser = document.getElementById('ori-serie').value; const s = students.find(x => x.id === id);
+  if(ser !== "Maintien actuel") {
+    s.serie = ser; if(s.niveau === '3ème') { s.niveau = '2nde'; s.cycle = '2nd Cycle'; } 
+    const suffix = ser.match(/\(([^)]+)\)/)?.[1] || ''; s.classe = suffix ? `${s.niveau} ${suffix}` : s.niveau;
+  }
+  showToast('<i data-lucide="compass"></i>', `Orientation validée.`); closeModal('modal-orientation'); runCalculations();
+}
+
+function savePayment() {
+  const pId = document.getElementById('edit-payment-index').value; const eleveId = parseInt(document.getElementById('pay-eleve').value); const montant = parseInt(document.getElementById('pay-amount').value); const date = document.getElementById('pay-date').value;
+  if(!montant || !date) return showToast('<i data-lucide="alert-triangle"></i>', 'Montant et date requis.');
+  const s = students.find(x => x.id === eleveId);
+  if(pId) {
+    const p = payments.find(x => x.id === parseInt(pId)); s.paye += (montant - p.montant); 
+    p.eleveId = eleveId; p.eleveNom = `${s.prenom} ${s.nom}`; p.montant = montant; p.methode = document.getElementById('pay-method').value; p.date = date;
+  } else {
+    payments.push({ id: Date.now(), eleveId, eleveNom: `${s.prenom} ${s.nom}`, classe: s.classe, montant, methode: document.getElementById('pay-method').value, date, statut: 'À jour' }); s.paye += montant;
+  }
+  s.statut = s.paye >= s.totalDu ? 'À jour' : 'Impayé partiel';
+  showToast('<i data-lucide="coins"></i>', 'Transaction validée.'); closeModal('modal-payment'); runCalculations();
+}
+
+function deletePayment(pId) {
+  const p = payments.find(x => x.id === pId); const s = students.find(x => x.id === p.eleveId);
+  if(s) { s.paye -= p.montant; s.statut = s.paye >= s.totalDu ? 'À jour' : (s.paye <= 0 ? 'Impayé total' : 'Impayé partiel'); }
+  payments = payments.filter(x => x.id !== pId); showToast('<i data-lucide="trash-2"></i>', 'Encaissement annulé.'); closeModal('modal-payment'); runCalculations();
+}
+function printReceipt() { showToast('<i data-lucide="printer"></i>', 'Génération du reçu officiel PDF...'); }
+
+function saveRH() {
+  const idStr = document.getElementById('edit-rh-id').value; const nom = document.getElementById('rh-nom').value;
+  if(!nom) return showToast('<i data-lucide="alert-triangle"></i>', 'Nom requis');
+  if(idStr) {
+    const t = teachers.find(x => x.id === parseInt(idStr)); t.nom = nom; t.matiere = document.getElementById('rh-matiere').value; t.tel = document.getElementById('rh-tel').value; showToast('<i data-lucide="check-circle"></i>', `Fiche RH mise à jour.`);
+  } else {
+    teachers.push({ id: Date.now(), nom, matiere: document.getElementById('rh-matiere').value, tel: document.getElementById('rh-tel').value, statut: "Actif" }); showToast('<i data-lucide="party-popper"></i>', `Enseignant ajouté.`);
+  }
+  closeModal('modal-rh'); renderRH();
+}
+function deleteRH(id) { teachers = teachers.filter(t => t.id !== id); showToast('<i data-lucide="trash-2"></i>', 'Dossier RH supprimé.'); closeModal('modal-rh'); renderRH(); }
+
+function saveProfil() {
+  const idStr = document.getElementById('edit-profil-id').value; const nom = document.getElementById('profil-nom').value; const email = document.getElementById('profil-email').value;
+  if(!nom || !email) return showToast('<i data-lucide="alert-triangle"></i>', 'Nom et email requis');
+  const role = document.getElementById('profil-role').value;
+  if(idStr) {
+    const a = admins.find(x => x.id === parseInt(idStr)); a.nom = nom; a.email = email; a.role = role; showToast('<i data-lucide="check-circle"></i>', `Habilitations mises à jour.`);
+  } else {
+    admins.push({ id: Date.now(), nom, email, role, statut: "Actif", lastLogin: "Jamais" }); showToast('<i data-lucide="party-popper"></i>', `Nouvel accès généré.`);
+  }
+  closeModal('modal-profil'); renderProfils();
+}
+
+function deleteProfil(id) { admins = admins.filter(a => a.id !== id); showToast('<i data-lucide="trash-2"></i>', 'Accès révoqué.'); closeModal('modal-profil'); renderProfils(); }
+
+function sendCampaign() {
+  const target = document.getElementById('comm-target').value; const msg = document.getElementById('comm-msg').value;
+  if(!msg) return showToast('<i data-lucide="alert-triangle"></i>', 'Le message ne peut être vide.');
+  const dateStr = new Date().toLocaleDateString('fr-FR', {day: '2-digit', month: 'short', year: 'numeric'});
+  const tbody = document.getElementById('comm-history'); const tr = document.createElement('tr');
+  tr.innerHTML = `<td class="text3 font-mono">${dateStr}</td><td>${target}</td><td class="text2" style="font-size:12px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${msg}</td><td><span class="badge green">Délivré via SMS</span></td>`;
+  tbody.insertBefore(tr, tbody.firstChild);
+  showToast('<i data-lucide="send"></i>', 'Campagne WhatsApp diffusée.'); document.getElementById('comm-msg').value = ''; 
 }
 
 function updateRowCalc(index, coef) {
@@ -1794,109 +2028,6 @@ function updateModalTotals(bulletin) {
   document.getElementById('notes-moy-gen').style.backgroundColor = mg >= 10 ? 'var(--primary)' : 'var(--red)';
 }
 
-function saveNotes() {
-  const id = parseInt(document.getElementById('note-eleve-id').value); const s = students.find(x => x.id === id);
-  s.bulletin.forEach((b, index) => {
-    b.interro = parseFloat(document.getElementById(`inp-int-${index}`).value) || 0;
-    b.devoir = parseFloat(document.getElementById(`inp-dev-${index}`).value) || 0;
-  });
-  showToast('<i data-lucide="edit-3"></i>', `Bulletin de ${s.prenom} mis à jour.`); 
-  closeModal('modal-notes'); runCalculations();
-}
-
-function openOrientationModal(id) {
-  const s = students.find(x => x.id === id);
-  document.getElementById('ori-eleve-id').value = s.id; document.getElementById('ori-nom').textContent = `${s.prenom} ${s.nom} (${s.classe})`;
-  document.getElementById('ori-moy').textContent = `${s.moyenne.toFixed(2)}/20`; document.getElementById('ori-apt').textContent = s.aptitude;
-  document.getElementById('ori-reason').textContent = s.recoReason; document.getElementById('ori-serie').value = s.recoSerie;
-  
-  const ctx = document.getElementById('ori-chart').getContext('2d');
-  if(oriChartInstance) oriChartInstance.destroy();
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  Chart.defaults.color = isDark ? '#CBD5E1' : '#475569';
-  const prof = analyzeProfile(s.bulletin);
-
-  oriChartInstance = new Chart(ctx, {
-    type: 'radar',
-    data: {
-      labels: ['Maths', 'Physique', 'SVT', 'Français'],
-      datasets: [{ label: 'Profil Élève', data: [prof.math, prof.phys, prof.svt, prof.fran], backgroundColor: 'rgba(124, 58, 237, 0.2)', borderColor: '#7C3AED', pointBackgroundColor: '#7C3AED', pointBorderColor: '#fff', borderWidth: 2 }]
-    },
-    options: { scales: { r: { min: 0, max: 20, ticks: { stepSize: 5, display: false } } }, plugins: { legend: { display: false } }, maintainAspectRatio: false }
-  });
-  document.getElementById('modal-orientation').classList.add('open');
-}
-
-function saveOrientation() {
-  const id = parseInt(document.getElementById('ori-eleve-id').value); const ser = document.getElementById('ori-serie').value; const s = students.find(x => x.id === id);
-  if(ser !== "Maintien actuel") {
-    s.serie = ser; if(s.niveau === '3ème') { s.niveau = '2nde'; s.cycle = '2nd Cycle'; } 
-    const suffix = ser.match(/\(([^)]+)\)/)?.[1] || ''; s.classe = suffix ? `${s.niveau} ${suffix}` : s.niveau;
-  }
-  showToast('<i data-lucide="compass"></i>', `Orientation validée.`); closeModal('modal-orientation'); runCalculations();
-}
-
-function openPaymentModal(paymentId = null) {
-  document.getElementById('modal-payment-title').textContent = paymentId !== null ? "Détails Encaissement" : "Saisir Encaissement";
-  const sel = document.getElementById('pay-eleve'); sel.innerHTML = students.map(s => `<option value="${s.id}">${s.prenom} ${s.nom} - Reste: ${s.totalDu - s.paye}F</option>`).join('');
-  const actionsZone = document.getElementById('payment-actions-zone');
-  if(paymentId !== null) {
-    const p = payments.find(x => x.id === paymentId); document.getElementById('edit-payment-index').value = p.id;
-    sel.value = p.eleveId; document.getElementById('pay-amount').value = p.montant; document.getElementById('pay-method').value = p.methode; document.getElementById('pay-date').value = p.date;
-    actionsZone.innerHTML = `<button class="btn btn-ghost" onclick="printReceipt()"><i data-lucide="printer"></i> Reçu</button> <button class="btn btn-danger" onclick="deletePayment(${p.id})">Annuler</button>`;
-  } else {
-    document.getElementById('edit-payment-index').value = ""; document.getElementById('pay-amount').value = ""; document.getElementById('pay-method').value = "FedaPay (MTN/Moov)"; document.getElementById('pay-date').value = new Date().toISOString().split('T')[0];
-    actionsZone.innerHTML = '';
-  }
-  document.getElementById('modal-payment').classList.add('open');
-  refreshIcons();
-}
-
-function savePayment() {
-  const pId = document.getElementById('edit-payment-index').value; const eleveId = parseInt(document.getElementById('pay-eleve').value); const montant = parseInt(document.getElementById('pay-amount').value); const date = document.getElementById('pay-date').value;
-  if(!montant || !date) return showToast('<i data-lucide="alert-triangle"></i>', 'Montant et date requis.');
-  const s = students.find(x => x.id === eleveId);
-  if(pId) {
-    const p = payments.find(x => x.id === parseInt(pId)); s.paye += (montant - p.montant); 
-    p.eleveId = eleveId; p.eleveNom = `${s.prenom} ${s.nom}`; p.montant = montant; p.methode = document.getElementById('pay-method').value; p.date = date;
-  } else {
-    payments.push({ id: Date.now(), eleveId, eleveNom: `${s.prenom} ${s.nom}`, classe: s.classe, montant, methode: document.getElementById('pay-method').value, date, statut: 'À jour' }); s.paye += montant;
-  }
-  s.statut = s.paye >= s.totalDu ? 'À jour' : 'Impayé partiel';
-  showToast('<i data-lucide="coins"></i>', 'Transaction validée.'); closeModal('modal-payment'); runCalculations();
-}
-
-function deletePayment(pId) {
-  const p = payments.find(x => x.id === pId); const s = students.find(x => x.id === p.eleveId);
-  if(s) { s.paye -= p.montant; s.statut = s.paye >= s.totalDu ? 'À jour' : (s.paye <= 0 ? 'Impayé total' : 'Impayé partiel'); }
-  payments = payments.filter(x => x.id !== pId); showToast('<i data-lucide="trash-2"></i>', 'Encaissement annulé.'); closeModal('modal-payment'); runCalculations();
-}
-function printReceipt() { showToast('<i data-lucide="printer"></i>', 'Génération du reçu officiel PDF...'); }
-
-function openRHModal(id = null) {
-  document.getElementById('modal-rh-title').textContent = id !== null ? "Fiche Enseignant" : "Nouveau Recrutement";
-  const delZone = document.getElementById('rh-delete-zone');
-  if(id !== null) {
-    const t = teachers.find(x => x.id === id); document.getElementById('edit-rh-id').value = t.id;
-    document.getElementById('rh-nom').value = t.nom; document.getElementById('rh-matiere').value = t.matiere; document.getElementById('rh-tel').value = t.tel;
-    delZone.innerHTML = `<button class="btn btn-danger" onclick="deleteRH(${t.id})">Renvoyer</button>`;
-  } else {
-    document.getElementById('edit-rh-id').value = ""; document.getElementById('rh-nom').value = ""; document.getElementById('rh-tel').value = ""; delZone.innerHTML = '';
-  }
-  document.getElementById('modal-rh').classList.add('open');
-}
-function saveRH() {
-  const idStr = document.getElementById('edit-rh-id').value; const nom = document.getElementById('rh-nom').value;
-  if(!nom) return showToast('<i data-lucide="alert-triangle"></i>', 'Nom requis');
-  if(idStr) {
-    const t = teachers.find(x => x.id === parseInt(idStr)); t.nom = nom; t.matiere = document.getElementById('rh-matiere').value; t.tel = document.getElementById('rh-tel').value; showToast('<i data-lucide="check-circle"></i>', `Fiche RH mise à jour.`);
-  } else {
-    teachers.push({ id: Date.now(), nom, matiere: document.getElementById('rh-matiere').value, tel: document.getElementById('rh-tel').value, statut: "Actif" }); showToast('<i data-lucide="party-popper"></i>', `Enseignant ajouté.`);
-  }
-  closeModal('modal-rh'); renderRH();
-}
-function deleteRH(id) { teachers = teachers.filter(t => t.id !== id); showToast('<i data-lucide="trash-2"></i>', 'Dossier RH supprimé.'); closeModal('modal-rh'); renderRH(); }
-
 function updatePermissionsList() {
   const role = document.getElementById('profil-role').value;
   const perms = ROLES_PERMISSIONS[role] || [];
@@ -1906,45 +2037,6 @@ function updatePermissionsList() {
     </div>
   `).join('');
   refreshIcons();
-}
-
-function openProfilModal(id = null) {
-  document.getElementById('modal-profil-title').textContent = id !== null ? "Modifier l'Accès" : "Nouvel Accès";
-  const delZone = document.getElementById('profil-delete-zone');
-  if(id !== null) {
-    const a = admins.find(x => x.id === id); document.getElementById('edit-profil-id').value = a.id;
-    document.getElementById('profil-nom').value = a.nom; document.getElementById('profil-email').value = a.email; document.getElementById('profil-role').value = a.role;
-    delZone.innerHTML = `<button class="btn btn-danger" onclick="deleteProfil(${a.id})">Révoquer l'accès</button>`;
-  } else {
-    document.getElementById('edit-profil-id').value = ""; document.getElementById('profil-nom').value = ""; document.getElementById('profil-email').value = ""; 
-    document.getElementById('profil-role').value = "Secrétaire"; delZone.innerHTML = '';
-  }
-  updatePermissionsList();
-  document.getElementById('modal-profil').classList.add('open');
-}
-
-function saveProfil() {
-  const idStr = document.getElementById('edit-profil-id').value; const nom = document.getElementById('profil-nom').value; const email = document.getElementById('profil-email').value;
-  if(!nom || !email) return showToast('<i data-lucide="alert-triangle"></i>', 'Nom et email requis');
-  const role = document.getElementById('profil-role').value;
-  if(idStr) {
-    const a = admins.find(x => x.id === parseInt(idStr)); a.nom = nom; a.email = email; a.role = role; showToast('<i data-lucide="check-circle"></i>', `Habilitations mises à jour.`);
-  } else {
-    admins.push({ id: Date.now(), nom, email, role, statut: "Actif", lastLogin: "Jamais" }); showToast('<i data-lucide="party-popper"></i>', `Nouvel accès généré.`);
-  }
-  closeModal('modal-profil'); renderProfils();
-}
-
-function deleteProfil(id) { admins = admins.filter(a => a.id !== id); showToast('<i data-lucide="trash-2"></i>', 'Accès révoqué.'); closeModal('modal-profil'); renderProfils(); }
-
-function sendCampaign() {
-  const target = document.getElementById('comm-target').value; const msg = document.getElementById('comm-msg').value;
-  if(!msg) return showToast('<i data-lucide="alert-triangle"></i>', 'Le message ne peut être vide.');
-  const dateStr = new Date().toLocaleDateString('fr-FR', {day: '2-digit', month: 'short', year: 'numeric'});
-  const tbody = document.getElementById('comm-history'); const tr = document.createElement('tr');
-  tr.innerHTML = `<td class="text3 font-mono">${dateStr}</td><td>${target}</td><td class="text2" style="font-size:12px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${msg}</td><td><span class="badge green">Délivré via SMS</span></td>`;
-  tbody.insertBefore(tr, tbody.firstChild);
-  showToast('<i data-lucide="send"></i>', 'Campagne WhatsApp diffusée.'); document.getElementById('comm-msg').value = ''; 
 }
 
 function updateKPIs() {
@@ -1964,7 +2056,7 @@ function showToast(icon, text) {
   document.getElementById('toast-text').textContent = text; 
   const t = document.getElementById('toast'); 
   t.classList.add('show'); 
-  refreshIcons(); // Toujours rafraîchir l'icône du toast 
+  refreshIcons(); 
   toastTimer = setTimeout(() => t.classList.remove('show'), 3000); 
 }
 
